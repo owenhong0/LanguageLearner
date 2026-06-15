@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { LangContent } from "../types";
 import { VOCAB_DECKS } from "../content";
 import { SectionHead } from "./SectionHead";
@@ -6,9 +7,12 @@ interface Props {
   c: LangContent;
   vocabKnown: Set<string>;
   practice: { answered: number; correct: number };
+  /** Clears all persisted progress (T2). */
+  onReset: () => void;
 }
 
-export function Progress({ c, vocabKnown, practice }: Props) {
+export function Progress({ c, vocabKnown, practice, onReset }: Props) {
+  const [confirming, setConfirming] = useState(false);
   const isKnown = (id: string, srs: number) => vocabKnown.has(`${c.id}:${id}`) || srs >= 4;
 
   const decks = VOCAB_DECKS.map((name) => {
@@ -86,7 +90,21 @@ export function Progress({ c, vocabKnown, practice }: Props) {
           )
         ))}
       </div>
-      <p className="footnote">Every number here is computed from what you've actually marked known and the quiz rounds you've played — nothing is pre-filled. Seal a whole deck (100%) to stamp its 印.</p>
+      <p className="footnote">Every number here is computed from what you've actually marked known and the quiz rounds you've played — nothing is pre-filled. Seal a whole deck (100%) to stamp its 印. Your progress is saved in this browser and survives a reload.</p>
+
+      <div className="prog-reset">
+        {!confirming ? (
+          <button className="btn ghost small" onClick={() => setConfirming(true)}>Reset progress</button>
+        ) : (
+          <div className="reset-confirm" role="alertdialog" aria-label="Confirm reset progress">
+            <span>Clear everything you've marked known and your quiz history? This can't be undone.</span>
+            <div className="reset-actions">
+              <button className="btn small" onClick={() => { onReset(); setConfirming(false); }}>Reset everything</button>
+              <button className="btn ghost small" onClick={() => setConfirming(false)}>Cancel</button>
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 }

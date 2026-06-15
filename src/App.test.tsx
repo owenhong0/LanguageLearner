@@ -1,7 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+
+// Each test starts from a clean browser-storage slate (T2 persistence).
+beforeEach(() => localStorage.clear());
 
 /**
  * These tests guard against the "blank screen on load" regression: if the app
@@ -58,5 +61,47 @@ describe("App loads and renders", () => {
     await user.click(within(pills).getByRole("button", { name: /japanese/i }));
     // Japanese uses Rōmaji as its romanization system; it appears in the UI.
     expect(await screen.findAllByText(/rōmaji/i)).not.toHaveLength(0);
+  });
+});
+
+describe("progress persistence (T2)", () => {
+  beforeEach(() => localStorage.clear());
+
+  const gotoProgress = async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Progress" }));
+    return user;
+  };
+
+  it("hydrates a persisted quiz tally from localStorage", async () => {
+    localStorage.setItem(
+      "moshui.v1",
+      JSON.stringify({ known: [], vocabKnown: [], bonus: 0, practice: { answered: 4, correct: 3 } }),
+    );
+    await gotoProgress();
+    // 3 / 4 = 75% accuracy ring.
+    expect(screen.getByText("75%")).toBeInTheDocument();
+  });
+
+  it("shows no accuracy on a clean first visit", async () => {
+    await gotoProgress();
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("resets progress after the two-step confirm and clears storage", async () => {
+    localStorage.setItem(
+      "moshui.v1",
+      JSON.stringify({ known: [], vocabKnown: [], bonus: 0, practice: { answered: 4, correct: 3 } }),
+    );
+    const user = await gotoProgress();
+    expect(screen.getByText("75%")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /reset progress/i }));
+    await user.click(screen.getByRole("button", { name: /reset everything/i }));
+
+    // Accuracy falls back to the empty state and storage is wiped.
+    expect(screen.getByText("—")).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("moshui.v1")!).practice).toEqual({ answered: 0, correct: 0 });
   });
 });
