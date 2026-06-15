@@ -66,12 +66,16 @@ export function Converse({ c }: Props) {
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!Rec) return;
     const rec = new Rec();
-    rec.lang = c.speechLang;
-    rec.interimResults = false;
+    rec.lang = c.speechLang; // zh-CN / zh-HK / ja-JP — recognize in the active language
+    rec.continuous = false;
+    rec.interimResults = true; // fill the box live as the learner speaks
     rec.maxAlternatives = 1;
     setListening(true);
     rec.onresult = (e: any) => {
-      const transcript = e.results?.[0]?.[0]?.transcript ?? "";
+      let transcript = "";
+      for (let i = e.resultIndex ?? 0; i < e.results.length; i++) {
+        transcript += e.results[i][0].transcript;
+      }
       setInput(transcript);
     };
     rec.onend = () => setListening(false);
