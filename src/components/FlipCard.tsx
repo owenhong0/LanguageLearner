@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useId, useState } from "react";
 import type { Card, LangContent } from "../types";
 import { speak } from "../speech";
 import { BOX_MAX } from "../store";
@@ -15,9 +15,15 @@ interface Props {
   onGrade: (knewIt: boolean) => void;
 }
 
+/**
+ * A flip card built from real <button>s (T4): the front face flips to the back,
+ * the back's text flips back, and the grading controls are siblings (never
+ * nested inside another button). The face that is turned away is removed from
+ * the accessibility tree (aria-hidden) and from the tab order (tabIndex -1).
+ */
 export function FlipCard({ card, lang, box, known, onGrade }: Props) {
   const [flipped, setFlipped] = useState(false);
-  const toggle = useCallback(() => setFlipped((f) => !f), []);
+  const backId = useId();
 
   // Grade, then flip back to the front so the learner moves to the next card.
   const grade = (knewIt: boolean) => {
@@ -26,22 +32,18 @@ export function FlipCard({ card, lang, box, known, onGrade }: Props) {
   };
 
   return (
-    <div
-      className={"flip" + (flipped ? " is-flipped" : "") + (known ? " known" : "")}
-      role="button"
-      tabIndex={0}
-      aria-pressed={flipped}
-      aria-label={`Card: ${card.glyph}. Press to flip.`}
-      onClick={toggle}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          toggle();
-        }
-      }}
-    >
+    <div className={"flip" + (flipped ? " is-flipped" : "") + (known ? " known" : "")}>
       <div className="flip-inner">
-        <div className="face front">
+        <button
+          type="button"
+          className="face front"
+          aria-expanded={flipped}
+          aria-controls={backId}
+          aria-hidden={flipped || undefined}
+          tabIndex={flipped ? -1 : 0}
+          aria-label={`Flashcard ${card.glyph}. Show meaning.`}
+          onClick={() => setFlipped(true)}
+        >
           {known && (
             <span className="known-tag">
               <CheckIcon /> known
@@ -54,17 +56,24 @@ export function FlipCard({ card, lang, box, known, onGrade }: Props) {
           <div className="anchor" aria-hidden="true">
             {card.anchor}
           </div>
-        </div>
+        </button>
 
-        <div className="face back">
-          <div>
+        <div className="face back" id={backId} aria-hidden={flipped ? undefined : true}>
+          <button
+            type="button"
+            className="back-flip"
+            aria-expanded={flipped}
+            tabIndex={flipped ? 0 : -1}
+            aria-label={`${card.meaning}. Show character.`}
+            onClick={() => setFlipped(false)}
+          >
             <div className="meaning">{card.meaning}</div>
             <div className="ex">
               <span className="ex-ch">{card.example.glyph}</span>{" "}
               <span className="ex-rom">{card.example.roman}</span>
               <br />“{card.example.gloss}”
             </div>
-          </div>
+          </button>
 
           <div className="sr">
             <div className="box-pips" role="img" aria-label={`Leitner box ${box} of ${BOX_MAX}`}>
@@ -74,30 +83,29 @@ export function FlipCard({ card, lang, box, known, onGrade }: Props) {
             </div>
             <div className="row">
               <button
+                type="button"
                 className="sr-hear"
+                tabIndex={flipped ? 0 : -1}
                 aria-label={`Hear ${card.glyph}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  speak(card.glyph, lang.speechLang);
-                }}
+                onClick={() => speak(card.glyph, lang.speechLang)}
               >
                 <PlayIcon />
               </button>
               <button
+                type="button"
                 className="btn small ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  grade(false);
-                }}
+                tabIndex={flipped ? 0 : -1}
+                aria-label={`Forgot ${card.glyph} — reset to box 1`}
+                onClick={() => grade(false)}
               >
                 Forgot
               </button>
               <button
+                type="button"
                 className="btn small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  grade(true);
-                }}
+                tabIndex={flipped ? 0 : -1}
+                aria-label={known ? `Keep ${card.glyph} mastered` : `Got ${card.glyph} — promote`}
+                onClick={() => grade(true)}
               >
                 {known ? "Keep ✓" : "Got it"}
               </button>

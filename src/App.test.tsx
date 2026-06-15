@@ -127,16 +127,50 @@ describe("spaced repetition (T3)", () => {
 
     await user.click(screen.getByRole("button", { name: "Due for review" }));
     // Only the one due card renders in Review mode.
-    expect(screen.getAllByRole("button", { name: /^Card:/ })).toHaveLength(1);
+    expect(screen.getAllByRole("button", { name: /^Flashcard/ })).toHaveLength(1);
   });
 
   it("promotes a card's box when graded 'Got it'", async () => {
     const user = userEvent.setup();
     render(<App />);
-    const firstCard = screen.getAllByRole("button", { name: /^Card:/ })[0];
+    const firstCard = screen.getAllByRole("button", { name: /^Flashcard/ })[0];
     await user.click(firstCard); // flip to reveal grading controls
-    await user.click(screen.getAllByRole("button", { name: /Got it/ })[0]);
+    await user.click(screen.getAllByRole("button", { name: /^Got/ })[0]);
     // One card has advanced from box 1 → box 2.
     expect(screen.getAllByLabelText(/Leitner box 2 of 5/).length).toBeGreaterThan(0);
+  });
+});
+
+describe("accessibility (T4)", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("flip cards are real buttons that expose and toggle aria-expanded", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const front = screen.getAllByRole("button", { name: /^Flashcard/ })[0];
+    expect(front).toHaveAttribute("aria-expanded", "false");
+    await user.click(front);
+    // The now-visible back control reports the expanded state.
+    expect(screen.getAllByRole("button", { name: /Show character/ })[0]).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("keeps the turned-away card back out of the accessibility tree until flipped", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    // Grading controls live on the back, which is aria-hidden while showing the front.
+    expect(screen.queryByRole("button", { name: /^Got/ })).toBeNull();
+    await user.click(screen.getAllByRole("button", { name: /^Flashcard/ })[0]);
+    expect(screen.getAllByRole("button", { name: /^Got/ }).length).toBeGreaterThan(0);
+  });
+
+  it("labels the Reading line reveal and play controls with their target", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Reading" }));
+    // Reveal toggle names the line text + action and exposes aria-expanded.
+    const reveal = screen.getAllByRole("button", { name: /show reading and translation/i })[0];
+    expect(reveal).toHaveAttribute("aria-expanded", "false");
+    // Each line has a play control naming the line.
+    expect(screen.getAllByRole("button", { name: /^Play line:/ }).length).toBeGreaterThan(0);
   });
 });

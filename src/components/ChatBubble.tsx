@@ -40,7 +40,7 @@ export function ChatBubble({ msg, lang }: Props) {
           <button
             className="b-play"
             onClick={() => speak(line.glyph, lang.speechLang)}
-            aria-label="Play this line"
+            aria-label={`Play: ${line.glyph}`}
           >
             <PlayIcon />
           </button>
