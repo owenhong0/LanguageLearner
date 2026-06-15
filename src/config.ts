@@ -9,4 +9,4 @@
  * VITE_API_BASE_URL=http://localhost:8787 — that env var overrides this constant.
  */
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "https://moshui-server.onrender.com";
+  import.meta.env.VITE_API_BASE_URL ?? "https://languagelearner-zhww.onrender.com";
