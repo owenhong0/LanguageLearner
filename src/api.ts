@@ -22,7 +22,19 @@ export interface GenerateResult {
   type: GenerateType;
   deck: string;
   difficulty: string;
+  language?: string;
+  langId?: string;
   items: GeneratedItem[];
+}
+
+export interface GenerateParams {
+  type: GenerateType;
+  /** Target language id ("cmn" | "yue" | "jpn"). */
+  langId: string;
+  /** Human language name the prompt hard-constrains to ("Mandarin" / "Cantonese" / "Japanese"). */
+  language: string;
+  deck: string;
+  difficulty: string;
 }
 
 /** Record one card's state on the server. Best-effort; callers may ignore failures. */
@@ -42,16 +54,17 @@ export async function fetchProgress(): Promise<ProgressSummary> {
   return res.json();
 }
 
-/** Ask the server to generate vocab / sentence / reading content via Anthropic. */
-export async function generateContent(
-  type: GenerateType,
-  deck: string,
-  difficulty: string,
-): Promise<GenerateResult> {
+/**
+ * Ask the server to generate vocab / sentence / reading content via Anthropic,
+ * constrained to the given target language. The language + difficulty come from
+ * the app's single source of truth (the GenerationProvider).
+ */
+export async function generateContent(params: GenerateParams): Promise<GenerateResult> {
+  const { type, langId, language, deck, difficulty } = params;
   const res = await fetch(`${API_BASE_URL}/generate`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ type, deck, difficulty }),
+    body: JSON.stringify({ type, langId, language, deck, difficulty }),
   });
   if (!res.ok) {
     let msg = `Generation failed (${res.status})`;

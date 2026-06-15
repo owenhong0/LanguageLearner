@@ -29,19 +29,20 @@ describe("api — Render backend client", () => {
     expect(JSON.parse(init.body)).toEqual({ deck: "Greetings", card: "v-nihao", status: "known" });
   });
 
-  it("generateContent POSTs { type, deck, difficulty } and returns items", async () => {
-    const result = { type: "vocab", deck: "Food", difficulty: "beginner", items: [{ glyph: "水", roman: "shuǐ", gloss: "water" }] };
+  it("generateContent POSTs { type, langId, language, deck, difficulty } and returns items", async () => {
+    const result = { type: "vocab", deck: "Food", difficulty: "beginner", language: "Mandarin", langId: "cmn", items: [{ glyph: "水", roman: "shuǐ", gloss: "water" }] };
     const f = vi.fn().mockResolvedValue(ok(result));
     vi.stubGlobal("fetch", f);
-    expect(await generateContent("vocab", "Food", "beginner")).toEqual(result);
+    expect(await generateContent({ type: "vocab", langId: "cmn", language: "Mandarin", deck: "Food", difficulty: "beginner" })).toEqual(result);
     const [url, init] = f.mock.calls[0];
     expect(String(url)).toMatch(/\/generate$/);
     expect(init.method).toBe("POST");
-    expect(JSON.parse(init.body)).toEqual({ type: "vocab", deck: "Food", difficulty: "beginner" });
+    // The selected language is in the payload — this is the language-bug guard.
+    expect(JSON.parse(init.body)).toEqual({ type: "vocab", langId: "cmn", language: "Mandarin", deck: "Food", difficulty: "beginner" });
   });
 
   it("generateContent surfaces the server's error message", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 502, json: async () => ({ error: "Model did not return JSON" }) }));
-    await expect(generateContent("vocab", "Food", "beginner")).rejects.toThrow(/did not return JSON/);
+    await expect(generateContent({ type: "vocab", langId: "cmn", language: "Mandarin", deck: "Food", difficulty: "beginner" })).rejects.toThrow(/did not return JSON/);
   });
 });

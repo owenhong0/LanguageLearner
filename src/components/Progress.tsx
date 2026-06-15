@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { LangContent } from "../types";
 import { VOCAB_DECKS } from "../content";
 import { SectionHead } from "./SectionHead";
+import { GeneratePanel } from "./GeneratePanel";
 
 interface Props {
   c: LangContent;
@@ -33,6 +34,9 @@ export function Progress({ c, vocabKnown, practice, onReset }: Props) {
   return (
     <>
       <SectionHead mark={c.marks.progress} title="Progress" sub={`Your ${c.name} so far`} />
+
+      <h3 className="block-title">Generate words to focus on</h3>
+      <GeneratePanel section="progress" types={["vocab"]} deck="words worth focusing on next" />
 
       <div className="prog-top">
         <div className="panel acc-card">
