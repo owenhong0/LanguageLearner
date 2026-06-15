@@ -269,13 +269,9 @@ button.face.front:focus-visible { outline: 2px solid var(--indigo); outline-offs
 .bp-counts { font-family: var(--mono); font-size: 12px; color: var(--soft); }
 .bp-counts .s-known { color: var(--jade); font-style: normal; }
 
-/* generated content cards */
-.gen-results { margin-bottom: 18px; }
-.gen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
-.gen-card { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-.gen-card .gen-glyph { font-family: var(--cjk); font-size: 22px; line-height: 1.4; color: var(--ink); }
-.gen-card .roman { font-family: var(--mono); color: var(--seal); font-size: 13px; }
-.gen-card .gen-gloss { color: var(--soft); font-size: 14px; }
+/* shared generate panel — controls + results (rendered via VocabCard) */
+.gen-panel { display: flex; flex-direction: column; gap: 12px; margin: 4px 0 18px; }
+.gen-cards { margin-top: 2px; }
 
 .add-word { padding: 16px 20px; margin-top: 18px; }
 .aw-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;

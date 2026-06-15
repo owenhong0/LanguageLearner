@@ -73,59 +73,97 @@ function parseJsonSafely(text) {
   }
 }
 
-function buildPrompt(type, deck, difficulty) {
-  const base =
-    `Generate language-learning content as STRICT JSON only — no markdown, no code fences, no commentary. ` +
-    `Difficulty: ${difficulty}. Topic / deck: "${deck}". ` +
-    `Output exactly this shape: ` +
-    `{"items":[{"glyph":"<target-language text>","roman":"<romanization>","gloss":"<English meaning or translation>"}]}.`;
-  if (type === "vocab") {
-    return `${base} Produce 6 useful vocabulary entries for this deck (glyph = word, gloss = meaning).`;
-  }
-  if (type === "sentence") {
-    return `${base} Produce 5 short, natural example sentences for this deck (roman = full-sentence romanization, gloss = English translation).`;
-  }
-  // reading
-  return `${base} Produce one short reading passage of 4 lines at this difficulty; each line is one item (gloss = English translation of that line).`;
+// Infer the language id from a free-text language name (fallback when langId omitted).
+function inferLangId(language) {
+  const l = String(language).toLowerCase();
+  if (l.includes("japan") || l.includes("日")) return "jpn";
+  if (l.includes("cantonese") || l.includes("粵") || l.includes("粤")) return "yue";
+  return "cmn";
 }
 
-// POST /generate — { type, deck, difficulty } → { type, deck, difficulty, items }.
+// Script ranges: Han (CJK ideographs) and Japanese kana.
+const HAN = /[㐀-鿿豈-﫿]/;
+const KANA = /[぀-ヿ]/;
+
+/**
+ * Reject content that isn't in the target language's script — this is what
+ * catches the "asked for Mandarin, got Spanish" bug, since Latin-script output
+ * contains no Han/kana at all.
+ */
+function scriptMatchesLanguage(items, langId) {
+  const joined = items.map((i) => i.glyph).join("");
+  if (!joined.trim()) return false;
+  if (langId === "jpn") return KANA.test(joined) || HAN.test(joined);
+  return HAN.test(joined); // cmn / yue → Han characters required
+}
+
+function buildPrompt(type, deck, difficulty, language) {
+  const constraint =
+    `Generate ALL content EXCLUSIVELY in ${language}. ` +
+    `Every "glyph" value MUST be written in ${language} using its native script — never Spanish, English, ` +
+    `or any other language in "glyph". "roman" is the romanization; "gloss" is the English meaning/translation. ` +
+    `Difficulty: ${difficulty}. Topic / deck: "${deck}".`;
+  const shape =
+    `Return STRICT JSON only — no markdown, no code fences, no commentary — exactly: ` +
+    `{"items":[{"glyph":"<${language} text>","roman":"<romanization>","gloss":"<English>"}]}.`;
+  if (type === "vocab") return `${constraint} Produce 6 useful ${language} vocabulary entries (glyph = word). ${shape}`;
+  if (type === "sentence") return `${constraint} Produce 5 short, natural ${language} sentences (roman = full-sentence romanization, gloss = English translation). ${shape}`;
+  return `${constraint} Produce one short ${language} reading passage of 4 lines; each line is one item (gloss = English translation). ${shape}`;
+}
+
+// POST /generate — { type, deck, difficulty, language, langId } → { type, deck, difficulty, items }.
 app.post("/generate", async (req, res) => {
-  const { type, deck = "General", difficulty = "beginner" } = req.body ?? {};
+  const { type, deck = "General", difficulty = "beginner", language, langId } = req.body ?? {};
   if (!TYPES.has(type)) {
     return res.status(400).json({ error: "type must be 'vocab', 'sentence', or 'reading'" });
+  }
+  if (typeof language !== "string" || !language.trim()) {
+    return res.status(400).json({ error: "language is required (e.g. 'Mandarin', 'Cantonese', 'Japanese')" });
   }
   if (!process.env.ANTHROPIC_API_KEY) {
     return res.status(503).json({ error: "Server is not configured: ANTHROPIC_API_KEY is missing" });
   }
 
+  const targetLangId = typeof langId === "string" ? langId : inferLangId(language);
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  // Generate, then validate the script; retry up to 3 times if the model drifts
+  // to the wrong language before giving up.
   try {
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1024,
-      system: "You return only valid, minified JSON matching the requested shape. Never include markdown, code fences, or explanations.",
-      messages: [{ role: "user", content: buildPrompt(type, String(deck), String(difficulty)) }],
-    });
+    let lastRaw = "";
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const reinforce =
+        attempt === 0
+          ? ""
+          : ` Your previous response was NOT in ${language}. Output ONLY ${language} in every "glyph". Try again.`;
+      const message = await client.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1024,
+        system: `You return only valid minified JSON. You generate content EXCLUSIVELY in ${language}; never output any other language in the "glyph" field.`,
+        messages: [{ role: "user", content: buildPrompt(type, String(deck), String(difficulty), language) + reinforce }],
+      });
 
-    const text = message.content.find((b) => b.type === "text")?.text ?? "";
-    const parsed = parseJsonSafely(text);
-    if (!parsed || !Array.isArray(parsed.items)) {
-      return res
-        .status(502)
-        .json({ error: "Model did not return the expected JSON shape", raw: text.slice(0, 500) });
+      const text = message.content.find((b) => b.type === "text")?.text ?? "";
+      lastRaw = text;
+      const parsed = parseJsonSafely(text);
+      if (!parsed || !Array.isArray(parsed.items)) continue;
+
+      const items = parsed.items
+        .filter((it) => it && typeof it.glyph === "string" && it.glyph.trim())
+        .map((it) => ({
+          glyph: String(it.glyph),
+          roman: typeof it.roman === "string" ? it.roman : "",
+          gloss: typeof it.gloss === "string" ? it.gloss : "",
+        }));
+
+      if (items.length && scriptMatchesLanguage(items, targetLangId)) {
+        return res.json({ type, deck, difficulty, language, langId: targetLangId, items });
+      }
     }
-
-    // Normalize + drop malformed entries.
-    const items = parsed.items
-      .filter((it) => it && typeof it.glyph === "string" && it.glyph.trim())
-      .map((it) => ({
-        glyph: String(it.glyph),
-        roman: typeof it.roman === "string" ? it.roman : "",
-        gloss: typeof it.gloss === "string" ? it.gloss : "",
-      }));
-
-    res.json({ type, deck, difficulty, items });
+    return res.status(502).json({
+      error: `Could not generate valid ${language} content after several attempts`,
+      raw: lastRaw.slice(0, 500),
+    });
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     console.error("[/generate] failed:", detail);

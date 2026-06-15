@@ -3,14 +3,8 @@ import type { LangContent, RomanPref, VocabItem } from "../types";
 import { VOCAB_DECKS } from "../content";
 import { VocabCard, type VocabStatus } from "./VocabCard";
 import { RomanToggle } from "./RomanToggle";
-import {
-  fetchProgress,
-  postProgress,
-  generateContent,
-  type ProgressSummary,
-  type GenerateResult,
-  type GenerateType,
-} from "../api";
+import { fetchProgress, postProgress, type ProgressSummary } from "../api";
+import { GeneratePanel } from "./GeneratePanel";
 
 interface Props {
   c: LangContent;
@@ -37,15 +31,10 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
   const [draftGlyph, setDraftGlyph] = useState("");
   const [draftMeaning, setDraftMeaning] = useState("");
 
-  // --- backend (Render server) state ---
-  const [genType, setGenType] = useState<GenerateType>("vocab");
-  const [difficulty, setDifficulty] = useState("beginner");
+  // --- backend (Render server) progress state ---
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
   const [progressBusy, setProgressBusy] = useState(false);
   const [progressErr, setProgressErr] = useState<string | null>(null);
-  const [generated, setGenerated] = useState<GenerateResult | null>(null);
-  const [genBusy, setGenBusy] = useState(false);
-  const [genErr, setGenErr] = useState<string | null>(null);
 
   const key = (item: VocabItem) => `${c.id}:${item.id}`;
   const all = useMemo(() => [...c.vocabulary, ...custom], [c.vocabulary, custom]);
@@ -100,9 +89,6 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
 
   const STATUS_FILTERS: StatusFilter[] = ["all", "new", "learning", "known"];
 
-  // Deck name to generate for — fall back to a general topic when "all" is selected.
-  const genDeck = deck === "all" ? "General vocabulary" : deck;
-
   async function checkProgress() {
     setProgressBusy(true);
     setProgressErr(null);
@@ -116,19 +102,6 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
     }
   }
 
-  async function generate() {
-    setGenBusy(true);
-    setGenErr(null);
-    try {
-      setGenerated(await generateContent(genType, genDeck, difficulty));
-    } catch (e) {
-      setGenErr(e instanceof Error ? e.message : "Generation failed");
-      setGenerated(null);
-    } finally {
-      setGenBusy(false);
-    }
-  }
-
   // Toggle a card "known" locally, and best-effort record the new state on the
   // server so GET /progress reflects real activity (failures are ignored).
   function markKnown(item: VocabItem) {
@@ -136,12 +109,6 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
     onKnow(key(item));
     postProgress(item.deck, item.id, next).catch(() => {});
   }
-
-  const GEN_TYPES: { value: GenerateType; label: string }[] = [
-    { value: "vocab", label: "Vocab" },
-    { value: "sentence", label: "Sentence" },
-    { value: "reading", label: "Reading" },
-  ];
 
   return (
     <>
@@ -152,41 +119,13 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
 
       <RomanToggle system={c.romanSystem} value={romanPref} onChange={onRomanPref} />
 
-      {/* backend: progress check + AI content generation (Render server) */}
+      {/* progress check (Render server) */}
       <div className="backend-panel panel">
         <div className="bp-row">
           <button className="btn ghost small" onClick={checkProgress} disabled={progressBusy}>
             {progressBusy ? "Checking…" : "Check my progress"}
           </button>
-          <div className="gen-controls">
-            <div className="mode-toggle" role="group" aria-label="Content type to generate">
-              {GEN_TYPES.map((t) => (
-                <button
-                  key={t.value}
-                  className={"seg" + (genType === t.value ? " active" : "")}
-                  aria-pressed={genType === t.value}
-                  onClick={() => setGenType(t.value)}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-            <select
-              className="vsearch gen-difficulty"
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              aria-label="Difficulty"
-            >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
-            <button className="btn small" onClick={generate} disabled={genBusy}>
-              {genBusy ? "Generating…" : "Generate new content"}
-            </button>
-          </div>
         </div>
-
         {progressErr && <p className="bp-msg err">{progressErr}</p>}
         {progress && (
           <div className="bp-summary">
@@ -210,29 +149,13 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
         )}
       </div>
 
-      {/* generated content rendered as cards */}
-      {(genErr || generated) && (
-        <div className="gen-results">
-          <h3 className="block-title">
-            Generated {genType} · {genDeck}
-          </h3>
-          {genErr && <p className="bp-msg err">{genErr}</p>}
-          {generated && generated.items.length === 0 && (
-            <p className="empty">The model returned no items — try again.</p>
-          )}
-          {generated && generated.items.length > 0 && (
-            <div className="gen-grid">
-              {generated.items.map((it, i) => (
-                <div key={i} className="vcard gen-card">
-                  <div className="gen-glyph">{it.glyph}</div>
-                  {romanPref !== "off" && it.roman && <div className="roman">{it.roman}</div>}
-                  {it.gloss && <div className="gen-gloss">{it.gloss}</div>}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {/* generate new content — shared panel, renders into the existing VocabCard */}
+      <h3 className="block-title">Generate new content</h3>
+      <GeneratePanel
+        section="vocab"
+        types={["vocab", "sentence", "reading"]}
+        deck={deck === "all" ? "essential everyday vocabulary" : deck}
+      />
 
       {/* summary */}
       <div className="vocab-summary panel">

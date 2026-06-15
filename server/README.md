@@ -10,12 +10,15 @@ Anthropic-powered content generation. No database, no auth.
 | `GET`  | `/health`    | `{ ok: true }` |
 | `POST` | `/progress`  | `{ deck, card, status }` where `status` ∈ `known\|learning\|new` → `{ ok, entry }` |
 | `GET`  | `/progress`  | `{ decks: { [deck]: { known, learning, new } }, totals, cards }` |
-| `POST` | `/generate`  | `{ type, deck, difficulty }` where `type` ∈ `vocab\|sentence\|reading` → `{ type, deck, difficulty, items: [{ glyph, roman, gloss }] }` |
+| `POST` | `/generate`  | `{ type, deck, difficulty, language, langId }` where `type` ∈ `vocab\|sentence\|reading` and `language` is the target language name (e.g. `"Mandarin"`) → `{ type, deck, difficulty, language, langId, items: [{ glyph, roman, gloss }] }` |
 
 Progress is an in-memory `Map` keyed by `deck::card`; it resets when the process
-restarts. `/generate` calls the Anthropic Messages API (`claude-sonnet-4-6`),
-prompts the model for **JSON only**, and parses the response defensively (it
-tolerates code fences and returns `502` if the shape is wrong).
+restarts. `/generate` requires a `language` (400 otherwise), calls the Anthropic
+Messages API (`claude-sonnet-4-6`) with a system prompt that **hard-constrains
+output to that language only**, prompts for **JSON only**, parses defensively
+(tolerates code fences), and **validates the script** of the result — if it
+isn't in the target language's script it regenerates (up to 3 attempts) before
+returning `502`. This is what prevents "asked for Mandarin, got Spanish".
 
 ## Run locally
 
