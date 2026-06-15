@@ -1,18 +1,29 @@
 import { useCallback, useState } from "react";
 import type { Card, LangContent } from "../types";
 import { speak } from "../speech";
+import { BOX_MAX } from "../store";
 import { PlayIcon, CheckIcon } from "./icons";
 
 interface Props {
   card: Card;
   lang: LangContent;
+  /** Leitner box level 1..5 (T3). */
+  box: number;
+  /** True once the card has reached the top box (mastered). */
   known: boolean;
-  onKnow: () => void;
+  /** Grade a recall: true = remembered (promote), false = forgot (back to box 1). */
+  onGrade: (knewIt: boolean) => void;
 }
 
-export function FlipCard({ card, lang, known, onKnow }: Props) {
+export function FlipCard({ card, lang, box, known, onGrade }: Props) {
   const [flipped, setFlipped] = useState(false);
   const toggle = useCallback(() => setFlipped((f) => !f), []);
+
+  // Grade, then flip back to the front so the learner moves to the next card.
+  const grade = (knewIt: boolean) => {
+    onGrade(knewIt);
+    setFlipped(false);
+  };
 
   return (
     <div
@@ -54,25 +65,43 @@ export function FlipCard({ card, lang, known, onKnow }: Props) {
               <br />“{card.example.gloss}”
             </div>
           </div>
-          <div className="row">
-            <button
-              className="btn small play"
-              onClick={(e) => {
-                e.stopPropagation();
-                speak(card.glyph, lang.speechLang);
-              }}
-            >
-              <PlayIcon /> Hear
-            </button>
-            <button
-              className="btn small ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                onKnow();
-              }}
-            >
-              {known ? "Reviewed ✓" : "I know this"}
-            </button>
+
+          <div className="sr">
+            <div className="box-pips" role="img" aria-label={`Leitner box ${box} of ${BOX_MAX}`}>
+              {Array.from({ length: BOX_MAX }, (_, i) => (
+                <i key={i} className={i < box ? "on" : ""} />
+              ))}
+            </div>
+            <div className="row">
+              <button
+                className="sr-hear"
+                aria-label={`Hear ${card.glyph}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  speak(card.glyph, lang.speechLang);
+                }}
+              >
+                <PlayIcon />
+              </button>
+              <button
+                className="btn small ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  grade(false);
+                }}
+              >
+                Forgot
+              </button>
+              <button
+                className="btn small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  grade(true);
+                }}
+              >
+                {known ? "Keep ✓" : "Got it"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

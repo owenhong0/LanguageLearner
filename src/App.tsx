@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { LangId } from "./types";
 import { CONTENT, GOAL_TARGET } from "./content";
-import { loadProgress, saveProgress, clearProgress } from "./store";
+import { loadProgress, saveProgress, clearProgress, boxLevel, promoteBox, demoteBox, BOX_MAX } from "./store";
 import { TopBar } from "./components/TopBar";
 import { Hero } from "./components/Hero";
 import { CharacterOfDay } from "./components/CharacterOfDay";
@@ -24,11 +24,12 @@ export default function App() {
   const [vocabKnown, setVocabKnown] = useState<Set<string>>(() => new Set(initial.vocabKnown));
   const [bonus, setBonus] = useState(initial.bonus);
   const [practice, setPractice] = useState(initial.practice);
+  const [boxes, setBoxes] = useState<Record<string, number>>(initial.boxes);
 
   // Persist whenever any tracked slice changes.
   useEffect(() => {
-    saveProgress({ known: [...known], vocabKnown: [...vocabKnown], bonus, practice });
-  }, [known, vocabKnown, bonus, practice]);
+    saveProgress({ known: [...known], vocabKnown: [...vocabKnown], bonus, practice, boxes });
+  }, [known, vocabKnown, bonus, practice, boxes]);
 
   const c = CONTENT[lang];
 
@@ -38,8 +39,19 @@ export default function App() {
     return Math.min(GOAL_TARGET, 6 + knownHere * 2 + bonus);
   }, [c, known, bonus]);
 
-  const handleKnow = useCallback((key: string) => {
-    setKnown((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
+  // Leitner grading for a review card (T3): a correct recall promotes the box,
+  // forgetting drops it to box 1. A card counts as "known" (mastered) once it
+  // reaches the top box — that's what feeds the review % and goal minutes.
+  const gradeCard = useCallback((key: string, knewIt: boolean) => {
+    setBoxes((prev) => {
+      const next = knewIt ? promoteBox(boxLevel(prev, key)) : demoteBox();
+      setKnown((k) => {
+        const n = new Set(k);
+        next >= BOX_MAX ? n.add(key) : n.delete(key);
+        return n;
+      });
+      return { ...prev, [key]: next };
+    });
   }, []);
   const handleVocabKnow = useCallback((key: string) => {
     setVocabKnown((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
@@ -53,6 +65,7 @@ export default function App() {
     setVocabKnown(new Set());
     setBonus(0);
     setPractice({ answered: 0, correct: 0 });
+    setBoxes({});
   }, []);
 
   return (
@@ -64,7 +77,7 @@ export default function App() {
             <Hero c={c} done={minutesDone} onPractice={() => setBonus((b) => b + 5)} />
             <h2 className="section-title">Character of the day</h2>
             <CharacterOfDay c={c} />
-            <ReviewDeck c={c} knownSet={known} onKnow={handleKnow} />
+            <ReviewDeck c={c} knownSet={known} boxes={boxes} onGrade={gradeCard} />
             <ToneTrainer c={c} />
             <p className="footnote">
               Home dashboard for <strong>墨 Moshui</strong>. Switch 粵 / 普 / 日 in the top bar to re-theme

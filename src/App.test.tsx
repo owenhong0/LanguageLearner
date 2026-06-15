@@ -105,3 +105,38 @@ describe("progress persistence (T2)", () => {
     expect(JSON.parse(localStorage.getItem("moshui.v1")!).practice).toEqual({ answered: 0, correct: 0 });
   });
 });
+
+describe("spaced repetition (T3)", () => {
+  beforeEach(() => localStorage.clear());
+
+  // Mandarin review-deck card keys.
+  const CMN = ["cmn:ni-hao", "cmn:xiexie", "cmn:chifan", "cmn:shui"];
+
+  it("shows every card as due on a clean start", () => {
+    render(<App />);
+    expect(screen.getByText(`${CMN.length} due`)).toBeInTheDocument();
+  });
+
+  it("hydrates Leitner boxes and surfaces only due cards in Review mode", async () => {
+    const user = userEvent.setup();
+    // All but one card mastered (box 5); 'shui' left at box 2 → 1 due.
+    const boxes = { "cmn:ni-hao": 5, "cmn:xiexie": 5, "cmn:chifan": 5, "cmn:shui": 2 };
+    localStorage.setItem("moshui.v1", JSON.stringify({ known: [], vocabKnown: [], bonus: 0, practice: { answered: 0, correct: 0 }, boxes }));
+    render(<App />);
+    expect(screen.getByText("1 due")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Due for review" }));
+    // Only the one due card renders in Review mode.
+    expect(screen.getAllByRole("button", { name: /^Card:/ })).toHaveLength(1);
+  });
+
+  it("promotes a card's box when graded 'Got it'", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const firstCard = screen.getAllByRole("button", { name: /^Card:/ })[0];
+    await user.click(firstCard); // flip to reveal grading controls
+    await user.click(screen.getAllByRole("button", { name: /Got it/ })[0]);
+    // One card has advanced from box 1 → box 2.
+    expect(screen.getAllByLabelText(/Leitner box 2 of 5/).length).toBeGreaterThan(0);
+  });
+});
