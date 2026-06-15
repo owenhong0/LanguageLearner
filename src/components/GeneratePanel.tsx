@@ -8,12 +8,18 @@ const TYPE_LABEL: Record<GenerateType, string> = {
   vocab: "Vocab",
   sentence: "Sentence",
   reading: "Reading",
+  structure: "Structure",
+  verbs: "Verbs",
+  phrases: "Phrases",
 };
 
 const DEFAULT_DECK: Record<GenerateType, string> = {
   vocab: "essential everyday vocabulary",
   sentence: "everyday conversation",
   reading: "a short beginner passage",
+  structure: "common sentence patterns",
+  verbs: "common everyday verbs",
+  phrases: "common set phrases",
 };
 
 interface Props {
@@ -22,6 +28,8 @@ interface Props {
   types: GenerateType[];
   /** Optional topic passed to the model; falls back to a per-type default. */
   deck?: string;
+  /** Known/learning words to prioritize reusing (Build section). */
+  vocab?: string[];
 }
 
 /**
@@ -30,14 +38,14 @@ interface Props {
  * items get the 田字格 box, romanization reveal, Hear / I-know-this, and status
  * states — the same component as the real vocabulary cards. Used in every section.
  */
-export function GeneratePanel({ section, types, deck }: Props) {
+export function GeneratePanel({ section, types, deck, vocab }: Props) {
   const gen = useGeneration();
   const [type, setType] = useState<GenerateType>(types[0]);
 
   const items = gen.itemsFor(section);
   const { busy, error } = gen.statusFor(section);
 
-  const onGenerate = () => gen.generate(section, type, deck ?? DEFAULT_DECK[type]);
+  const onGenerate = () => gen.generate(section, type, deck ?? DEFAULT_DECK[type], vocab);
 
   return (
     <div className="gen-panel">

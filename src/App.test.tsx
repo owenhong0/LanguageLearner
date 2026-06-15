@@ -17,7 +17,7 @@ describe("App loads and renders", () => {
     // The sticky top bar is a <header> (banner) — proves the app mounted.
     expect(screen.getByRole("banner")).toBeInTheDocument();
     // The top nav exposes all six tabs as buttons.
-    for (const tab of ["Home", "Converse", "Vocabulary", "Reading", "Practice", "Progress"]) {
+    for (const tab of ["Home", "Converse", "Vocabulary", "Build", "Reading", "Practice", "Progress"]) {
       expect(screen.getByRole("button", { name: tab })).toBeInTheDocument();
     }
   });
@@ -348,5 +348,62 @@ describe("Vocabulary ↔ Render backend", () => {
     const user = await gotoVocab();
     await user.click(screen.getByRole("button", { name: /generate .* content/i }));
     expect(await screen.findByText(/generation failed/i)).toBeInTheDocument();
+  });
+});
+
+describe("Build section", () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.unstubAllGlobals());
+
+  const gotoBuild = async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Build" }));
+    return user;
+  };
+
+  it("shows grammar patterns and the four sub-tabs for the selected language", async () => {
+    await gotoBuild();
+    expect(screen.getByRole("heading", { name: "Build" })).toBeInTheDocument();
+    // Curated Mandarin pattern.
+    expect(screen.getByText(/subject.+verb.+object/i)).toBeInTheDocument();
+    for (const t of ["Structure", "Verbs", "Phrases", "Builder"]) {
+      expect(screen.getByRole("button", { name: t })).toBeInTheDocument();
+    }
+  });
+
+  it("switches to the Verbs sub-tab and shows curated verbs", async () => {
+    const user = await gotoBuild();
+    await user.click(screen.getByRole("button", { name: "Verbs" }));
+    expect(screen.getByText("喝")).toBeInTheDocument(); // 喝 "to drink"
+  });
+
+  it("generates structure content in the selected language, prioritizing known vocab", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ type: "structure", deck: "x", difficulty: "beginner", items: [{ glyph: "我喝水。", roman: "wǒ hē shuǐ.", gloss: "SVO — I drink water." }] }),
+    });
+    vi.stubGlobal("fetch", fetchSpy);
+    const user = await gotoBuild();
+    await user.click(screen.getByRole("button", { name: /generate .* content/i }));
+    expect(await screen.findByText("我喝水。")).toBeInTheDocument();
+    const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
+    expect(body).toMatchObject({ type: "structure", language: "Mandarin", langId: "cmn" });
+    expect(Array.isArray(body.vocab) && body.vocab.length > 0).toBe(true);
+  });
+
+  it("builder generates sentences from the learner's known words", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ type: "sentence", deck: "x", difficulty: "beginner", items: [{ glyph: "我喝茶。", roman: "wǒ hē chá.", gloss: "I drink tea." }] }),
+    });
+    vi.stubGlobal("fetch", fetchSpy);
+    const user = await gotoBuild();
+    await user.click(screen.getByRole("button", { name: "Builder" }));
+    await user.click(screen.getByRole("button", { name: /generate .* content/i }));
+    expect(await screen.findByText("我喝茶。")).toBeInTheDocument();
+    const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
+    expect(body.type).toBe("sentence");
+    expect(Array.isArray(body.vocab) && body.vocab.length > 0).toBe(true);
   });
 });

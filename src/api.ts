@@ -3,7 +3,7 @@ import { API_BASE_URL } from "./config";
 /** Backend client for the Moshui Render server (/server). */
 
 export type CardStatus = "known" | "learning" | "new";
-export type GenerateType = "vocab" | "sentence" | "reading";
+export type GenerateType = "vocab" | "sentence" | "reading" | "structure" | "verbs" | "phrases";
 
 export interface ProgressSummary {
   /** Per-deck counts: { "Greetings": { known, learning, new } }. */
@@ -35,6 +35,8 @@ export interface GenerateParams {
   language: string;
   deck: string;
   difficulty: string;
+  /** Words the learner already knows, to prioritize reusing (Build section). */
+  vocab?: string[];
 }
 
 /** Record one card's state on the server. Best-effort; callers may ignore failures. */
@@ -60,11 +62,11 @@ export async function fetchProgress(): Promise<ProgressSummary> {
  * the app's single source of truth (the GenerationProvider).
  */
 export async function generateContent(params: GenerateParams): Promise<GenerateResult> {
-  const { type, langId, language, deck, difficulty } = params;
+  const { type, langId, language, deck, difficulty, vocab } = params;
   const res = await fetch(`${API_BASE_URL}/generate`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ type, langId, language, deck, difficulty }),
+    body: JSON.stringify({ type, langId, language, deck, difficulty, vocab }),
   });
   if (!res.ok) {
     let msg = `Generation failed (${res.status})`;

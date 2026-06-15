@@ -1,7 +1,7 @@
 import type { LangContent, LangId } from "./types";
 
 export const LANG_ORDER: LangId[] = ["yue", "cmn", "jpn"];
-export const TABS = ["Home", "Converse", "Vocabulary", "Reading", "Practice", "Progress"];
+export const TABS = ["Home", "Converse", "Vocabulary", "Build", "Reading", "Practice", "Progress"];
 export const GOAL_TARGET = 15; // minutes
 export const VOCAB_DECKS = ["Greetings", "Food & drink", "Daily life"];
 
@@ -132,6 +132,27 @@ export const CONTENT: Record<LangId, LangContent> = {
         { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "朋友", correct: true }, { glyph: "工作", correct: false }, { glyph: "时间", correct: false }, { glyph: "谢谢", correct: false } ] },
         { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "你好", correct: true }, { glyph: "再见", correct: false }, { glyph: "对不起", correct: false }, { glyph: "谢谢", correct: false } ] },
         { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "茶", correct: false }, { glyph: "饭", correct: false }, { glyph: "酒", correct: false } ] },
+      ],
+    },
+    build: {
+      patterns: [
+        { name: "Subject–Verb–Object", template: "[主语] + [动词] + [宾语]", example: { glyph: "我喝茶。", roman: "wǒ hē chá.", gloss: "I drink tea." } },
+        { name: "Topic–comment", template: "[话题]，[评论]", example: { glyph: "今天天气很好。", roman: "jīn tiān tiān qì hěn hǎo.", gloss: "Today, the weather is nice." } },
+        { name: "Measure word", template: "[数] + [量词] + [名词]", example: { glyph: "一杯水", roman: "yì bēi shuǐ", gloss: "a glass of water" } },
+        { name: "了 — completed action", template: "[动词] + 了", example: { glyph: "我吃饭了。", roman: "wǒ chī fàn le.", gloss: "I have eaten." } },
+        { name: "吗 — yes/no question", template: "[陈述句] + 吗？", example: { glyph: "你好吗？", roman: "nǐ hǎo ma?", gloss: "How are you?" } },
+      ],
+      verbs: [
+        { glyph: "喝", roman: "hē", meaning: "to drink", example: { glyph: "我喝了茶。", roman: "wǒ hē le chá.", gloss: "I drank tea." } },
+        { glyph: "吃", roman: "chī", meaning: "to eat", example: { glyph: "你吃过饭吗？", roman: "nǐ chī guo fàn ma?", gloss: "Have you eaten?" } },
+        { glyph: "去", roman: "qù", meaning: "to go", example: { glyph: "他去公园。", roman: "tā qù gōng yuán.", gloss: "He goes to the park." } },
+        { glyph: "是", roman: "shì", meaning: "to be", example: { glyph: "他是我的朋友。", roman: "tā shì wǒ de péng you.", gloss: "He is my friend." } },
+      ],
+      phrases: [
+        { glyph: "你好吗", roman: "nǐ hǎo ma", meaning: "how are you?" },
+        { glyph: "谢谢你", roman: "xiè xie nǐ", meaning: "thank you" },
+        { glyph: "不客气", roman: "bù kè qi", meaning: "you're welcome" },
+        { glyph: "没关系", roman: "méi guān xi", meaning: "it's okay / no problem" },
       ],
     },
   },
@@ -266,6 +287,27 @@ export const CONTENT: Record<LangId, LangContent> = {
         { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "茶", correct: false }, { glyph: "飯", correct: false }, { glyph: "啤酒", correct: false } ] },
       ],
     },
+    build: {
+      patterns: [
+        { name: "Subject–Verb–Object", template: "[主語] + [動詞] + [賓語]", example: { glyph: "我飲茶。", roman: "ngo5 jam2 caa4.", gloss: "I drink tea." } },
+        { name: "Topic–comment", template: "[話題]，[評論]", example: { glyph: "今日天氣好好。", roman: "gam1 jat6 tin1 hei3 hou2 hou2.", gloss: "Today, the weather is great." } },
+        { name: "Measure word", template: "[數] + [量詞] + [名詞]", example: { glyph: "一杯水", roman: "jat1 bui1 seoi2", gloss: "a glass of water" } },
+        { name: "咗 — completed action", template: "[動詞] + 咗", example: { glyph: "我食咗飯。", roman: "ngo5 sik6 zo2 faan6.", gloss: "I have eaten." } },
+        { name: "嗎 — yes/no question", template: "[陳述句] + 嗎？", example: { glyph: "你好嗎？", roman: "nei5 hou2 maa3?", gloss: "How are you?" } },
+      ],
+      verbs: [
+        { glyph: "飲", roman: "jam2", meaning: "to drink", example: { glyph: "我飲咗茶。", roman: "ngo5 jam2 zo2 caa4.", gloss: "I drank tea." } },
+        { glyph: "食", roman: "sik6", meaning: "to eat", example: { glyph: "你食咗飯未？", roman: "nei5 sik6 zo2 faan6 mei6?", gloss: "Have you eaten yet?" } },
+        { glyph: "去", roman: "heoi3", meaning: "to go", example: { glyph: "佢去公園。", roman: "keoi5 heoi3 gung1 jyun2.", gloss: "He goes to the park." } },
+        { glyph: "係", roman: "hai6", meaning: "to be", example: { glyph: "佢係我朋友。", roman: "keoi5 hai6 ngo5 pang4 jau5.", gloss: "He is my friend." } },
+      ],
+      phrases: [
+        { glyph: "你好嗎", roman: "nei5 hou2 maa3", meaning: "how are you?" },
+        { glyph: "多謝", roman: "do1 ze6", meaning: "thank you (for a gift)" },
+        { glyph: "唔該", roman: "m4 goi1", meaning: "thanks / excuse me" },
+        { glyph: "唔使客氣", roman: "m4 sai2 haak3 hei3", meaning: "you're welcome" },
+      ],
+    },
   },
 
   jpn: {
@@ -394,6 +436,27 @@ export const CONTENT: Record<LangId, LangContent> = {
         { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "友達", correct: true }, { glyph: "仕事", correct: false }, { glyph: "時間", correct: false }, { glyph: "ありがとう", correct: false } ] },
         { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "こんにちは", correct: true }, { glyph: "さようなら", correct: false }, { glyph: "ありがとう", correct: false }, { glyph: "おはよう", correct: false } ] },
         { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "お茶", correct: false }, { glyph: "ご飯", correct: false }, { glyph: "ビール", correct: false } ] },
+      ],
+    },
+    build: {
+      patterns: [
+        { name: "Subject–Object–Verb", template: "[主語]は + [目的語]を + [動詞]", example: { glyph: "私はお茶を飲みます。", roman: "watashi wa o-cha o nomimasu.", gloss: "I drink tea." } },
+        { name: "は — topic marker", template: "[話題]は + [説明]です。", example: { glyph: "今日はいい天気です。", roman: "kyō wa ii tenki desu.", gloss: "Today, the weather is nice." } },
+        { name: "を — object marker", template: "[目的語]を + [動詞]", example: { glyph: "ご飯を食べます。", roman: "gohan o tabemasu.", gloss: "I eat a meal." } },
+        { name: "ました — polite past", template: "[動詞]ました", example: { glyph: "魚を食べました。", roman: "sakana o tabemashita.", gloss: "I ate fish." } },
+        { name: "か — question particle", template: "[文]か。", example: { glyph: "お元気ですか。", roman: "o-genki desu ka.", gloss: "How are you?" } },
+      ],
+      verbs: [
+        { glyph: "飲む", roman: "nomu", meaning: "to drink", example: { glyph: "お茶を飲みます。", roman: "o-cha o nomimasu.", gloss: "I drink tea (polite)." } },
+        { glyph: "食べる", roman: "taberu", meaning: "to eat", example: { glyph: "ご飯を食べました。", roman: "gohan o tabemashita.", gloss: "I ate a meal." } },
+        { glyph: "行く", roman: "iku", meaning: "to go", example: { glyph: "公園に行きます。", roman: "kōen ni ikimasu.", gloss: "I go to the park." } },
+        { glyph: "する", roman: "suru", meaning: "to do", example: { glyph: "仕事をします。", roman: "shigoto o shimasu.", gloss: "I do work." } },
+      ],
+      phrases: [
+        { glyph: "お元気ですか", roman: "o-genki desu ka", meaning: "how are you?" },
+        { glyph: "ありがとうございます", roman: "arigatō gozaimasu", meaning: "thank you" },
+        { glyph: "どういたしまして", roman: "dō itashimashite", meaning: "you're welcome" },
+        { glyph: "すみません", roman: "sumimasen", meaning: "excuse me / sorry" },
       ],
     },
   },

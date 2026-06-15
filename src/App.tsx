@@ -12,6 +12,7 @@ import { Converse } from "./components/Converse";
 import { Reading } from "./components/Reading";
 import { Practice } from "./components/Practice";
 import { Progress } from "./components/Progress";
+import { Build } from "./components/Build";
 import { GenerationProvider } from "./generation";
 
 export default function App() {
@@ -94,6 +95,7 @@ export default function App() {
 
         {tab === "Converse" && <Converse c={c} />}
         {tab === "Vocabulary" && <Vocabulary c={c} known={vocabKnown} onKnow={handleVocabKnow} romanPref={romanPref} onRomanPref={setRomanPref} />}
+        {tab === "Build" && <Build c={c} vocabKnown={vocabKnown} />}
         {tab === "Reading" && <Reading c={c} romanPref={romanPref} onRomanPref={setRomanPref} />}
         {tab === "Practice" && <Practice c={c} onAnswer={recordAnswer} />}
         {tab === "Progress" && <Progress c={c} vocabKnown={vocabKnown} practice={practice} onReset={resetProgress} />}

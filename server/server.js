@@ -53,7 +53,7 @@ app.get("/progress", (_req, res) => {
 // ---------------------------------------------------------------------------
 // Content generation via the Anthropic Messages API.
 // ---------------------------------------------------------------------------
-const TYPES = new Set(["vocab", "sentence", "reading"]);
+const TYPES = new Set(["vocab", "sentence", "reading", "structure", "verbs", "phrases"]);
 
 /** Pull a JSON object out of a model response, tolerating code fences / stray prose. */
 function parseJsonSafely(text) {
@@ -97,23 +97,41 @@ function scriptMatchesLanguage(items, langId) {
   return HAN.test(joined); // cmn / yue → Han characters required
 }
 
-function buildPrompt(type, deck, difficulty, language) {
+function buildPrompt(type, deck, difficulty, language, vocab) {
+  const prefer =
+    Array.isArray(vocab) && vocab.length
+      ? ` Prioritize reusing words the learner already knows: ${vocab.slice(0, 24).join(", ")}.`
+      : "";
   const constraint =
     `Generate ALL content EXCLUSIVELY in ${language}. ` +
     `Every "glyph" value MUST be written in ${language} using its native script — never Spanish, English, ` +
     `or any other language in "glyph". "roman" is the romanization; "gloss" is the English meaning/translation. ` +
-    `Difficulty: ${difficulty}. Topic / deck: "${deck}".`;
+    `Difficulty: ${difficulty}. Topic / deck: "${deck}".${prefer}`;
   const shape =
     `Return STRICT JSON only — no markdown, no code fences, no commentary — exactly: ` +
     `{"items":[{"glyph":"<${language} text>","roman":"<romanization>","gloss":"<English>"}]}.`;
-  if (type === "vocab") return `${constraint} Produce 6 useful ${language} vocabulary entries (glyph = word). ${shape}`;
-  if (type === "sentence") return `${constraint} Produce 5 short, natural ${language} sentences (roman = full-sentence romanization, gloss = English translation). ${shape}`;
-  return `${constraint} Produce one short ${language} reading passage of 4 lines; each line is one item (gloss = English translation). ${shape}`;
+  switch (type) {
+    case "vocab":
+      return `${constraint} Produce 6 useful ${language} vocabulary entries (glyph = word). ${shape}`;
+    case "sentence":
+      return `${constraint} Produce 5 short, natural ${language} sentences (roman = full-sentence romanization, gloss = English translation). ${shape}`;
+    case "reading":
+      return `${constraint} Produce one short ${language} reading passage of 4 lines; each line is one item (gloss = English translation). ${shape}`;
+    case "structure":
+      return `${constraint} Produce 4 common ${language} sentence-structure / grammar patterns. For each item, glyph = a complete example sentence in ${language}, roman = its romanization, gloss = "<pattern name> — <English translation>". ${shape}`;
+    case "verbs":
+      return `${constraint} Produce 5 common ${language} verbs shown in context. glyph = the verb used in a short phrase or sentence, roman = romanization, gloss = "<verb meaning> — <note on the form or aspect used>". ${shape}`;
+    case "phrases":
+      return `${constraint} Produce 5 common ${language} multi-word phrases or set expressions (glyph = the phrase). ${shape}`;
+    default:
+      return `${constraint} Produce 6 ${language} items. ${shape}`;
+  }
 }
 
 // POST /generate — { type, deck, difficulty, language, langId } → { type, deck, difficulty, items }.
 app.post("/generate", async (req, res) => {
-  const { type, deck = "General", difficulty = "beginner", language, langId } = req.body ?? {};
+  const { type, deck = "General", difficulty = "beginner", language, langId, vocab } = req.body ?? {};
+  const vocabHints = Array.isArray(vocab) ? vocab.filter((v) => typeof v === "string") : undefined;
   if (!TYPES.has(type)) {
     return res.status(400).json({ error: "type must be 'vocab', 'sentence', or 'reading'" });
   }
@@ -140,7 +158,7 @@ app.post("/generate", async (req, res) => {
         model: "claude-sonnet-4-6",
         max_tokens: 1024,
         system: `You return only valid minified JSON. You generate content EXCLUSIVELY in ${language}; never output any other language in the "glyph" field.`,
-        messages: [{ role: "user", content: buildPrompt(type, String(deck), String(difficulty), language) + reinforce }],
+        messages: [{ role: "user", content: buildPrompt(type, String(deck), String(difficulty), language, vocabHints) + reinforce }],
       });
 
       const text = message.content.find((b) => b.type === "text")?.text ?? "";
