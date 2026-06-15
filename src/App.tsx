@@ -12,6 +12,7 @@ import { Converse } from "./components/Converse";
 import { Reading } from "./components/Reading";
 import { Practice } from "./components/Practice";
 import { Progress } from "./components/Progress";
+import { GenerationProvider } from "./generation";
 
 export default function App() {
   const [lang, setLang] = useState<LangId>("cmn");
@@ -73,6 +74,7 @@ export default function App() {
   return (
     <>
       <TopBar lang={lang} onLang={setLang} tab={tab} onTab={setTab} />
+      <GenerationProvider lang={lang} romanPref={romanPref}>
       <main className="wrap">
         {tab === "Home" && (
           <>
@@ -96,6 +98,7 @@ export default function App() {
         {tab === "Practice" && <Practice c={c} onAnswer={recordAnswer} />}
         {tab === "Progress" && <Progress c={c} vocabKnown={vocabKnown} practice={practice} onReset={resetProgress} />}
       </main>
+      </GenerationProvider>
     </>
   );
 }

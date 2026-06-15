@@ -266,3 +266,87 @@ describe("Converse tutor: demo mode + live proxy (T1)", () => {
     expect(await screen.findByText("好的，要哪种茶？")).toBeInTheDocument();
   });
 });
+
+describe("Vocabulary ↔ Render backend", () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.unstubAllGlobals());
+
+  const gotoVocab = async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Vocabulary" }));
+    return user;
+  };
+
+  it("renders the server progress summary from GET /progress", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ decks: { Greetings: { known: 2, learning: 1, new: 0 } }, totals: { known: 2, learning: 1, new: 0 }, cards: 3 }),
+      }),
+    );
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /check my progress/i }));
+    expect(await screen.findByText(/3 cards tracked/i)).toBeInTheDocument();
+    expect(screen.getByText(/2 known/)).toBeInTheDocument();
+  });
+
+  const stubGenerate = (item = { glyph: "宇宙", roman: "yǔzhòu", gloss: "the universe" }) =>
+    vi.fn().mockImplementation((url: string) =>
+      Promise.resolve({
+        ok: true,
+        json: async () =>
+          String(url).endsWith("/generate")
+            ? { type: "vocab", deck: "x", difficulty: "beginner", items: [item] }
+            : { decks: {}, totals: { known: 0, learning: 0, new: 0 }, cards: 0 },
+      }),
+    );
+
+  it("generates content and renders it through the existing VocabCard", async () => {
+    const fetchSpy = stubGenerate();
+    vi.stubGlobal("fetch", fetchSpy);
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /generate .* content/i }));
+    // Rendered via VocabCard: glyph in the 田字格, romanization shown.
+    expect(await screen.findByText("宇宙")).toBeInTheDocument();
+    expect(screen.getByText("yǔzhòu")).toBeInTheDocument();
+  });
+
+  it("includes the SELECTED language in the /generate payload (the language-bug fix)", async () => {
+    const fetchSpy = stubGenerate();
+    vi.stubGlobal("fetch", fetchSpy);
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /generate .* content/i }));
+    const body = JSON.parse(fetchSpy.mock.calls.find((c) => String(c[0]).endsWith("/generate"))![1].body);
+    // Default language is Mandarin → must be sent, not English/Spanish/default.
+    expect(body).toMatchObject({ type: "vocab", language: "Mandarin", langId: "cmn", difficulty: "beginner" });
+  });
+
+  it("sends the new language after switching the top-bar language", async () => {
+    const fetchSpy = stubGenerate({ glyph: "宇宙", roman: "uchū", gloss: "the universe" });
+    vi.stubGlobal("fetch", fetchSpy);
+    const user = await gotoVocab();
+    const pills = screen.getByRole("group", { name: /language/i });
+    await user.click(within(pills).getByRole("button", { name: /japanese/i }));
+    await user.click(screen.getByRole("button", { name: /generate .* content/i }));
+    const body = JSON.parse(fetchSpy.mock.calls.find((c) => String(c[0]).endsWith("/generate"))![1].body);
+    expect(body).toMatchObject({ language: "Japanese", langId: "jpn" });
+  });
+
+  it("persists generated items to localStorage (survives reload)", async () => {
+    vi.stubGlobal("fetch", stubGenerate());
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /generate .* content/i }));
+    await screen.findByText("宇宙");
+    const saved = JSON.parse(localStorage.getItem("moshui.gen.v1")!);
+    expect(saved.results["vocab:cmn"][0]).toMatchObject({ glyph: "宇宙" });
+  });
+
+  it("shows an error when generation fails", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 502, json: async () => ({ error: "Generation failed" }) }));
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /generate .* content/i }));
+    expect(await screen.findByText(/generation failed/i)).toBeInTheDocument();
+  });
+});

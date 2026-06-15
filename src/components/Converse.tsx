@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { LangContent } from "../types";
 import { ChatBubble, type ChatMsg } from "./ChatBubble";
 import { askTutor, isLiveTutorConfigured, type TutorTurn } from "../tutor";
+import { GeneratePanel } from "./GeneratePanel";
 
 interface Props {
   c: LangContent;
@@ -204,6 +205,9 @@ export function Converse({ c }: Props) {
           </button>
         </div>
       </div>
+
+      <h3 className="block-title">Generate practice phrases</h3>
+      <GeneratePanel section="converse" types={["sentence"]} deck="everyday conversation" />
 
       <p className="footnote">
         {live ? (

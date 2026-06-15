@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { LangContent } from "../types";
 import { speak } from "../speech";
 import { SectionHead } from "./SectionHead";
+import { GeneratePanel } from "./GeneratePanel";
 import { PlayIcon, CheckIcon } from "./icons";
 
 interface Props {
@@ -40,6 +41,9 @@ export function Practice({ c, onAnswer }: Props) {
   return (
     <>
       <SectionHead mark={c.marks.practice} title="Practice" sub="Trace a character, then test yourself" />
+
+      <h3 className="block-title">Generate characters to practise</h3>
+      <GeneratePanel section="practice" types={["vocab"]} deck="useful characters to practise" />
 
       {/* 田字格 trace — one cell per character */}
       <div className="trace panel">

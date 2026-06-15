@@ -3,6 +3,8 @@ import type { LangContent, RomanPref, VocabItem } from "../types";
 import { VOCAB_DECKS } from "../content";
 import { VocabCard, type VocabStatus } from "./VocabCard";
 import { RomanToggle } from "./RomanToggle";
+import { fetchProgress, postProgress, type ProgressSummary } from "../api";
+import { GeneratePanel } from "./GeneratePanel";
 
 interface Props {
   c: LangContent;
@@ -28,6 +30,11 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
   const [custom, setCustom] = useState<VocabItem[]>([]);
   const [draftGlyph, setDraftGlyph] = useState("");
   const [draftMeaning, setDraftMeaning] = useState("");
+
+  // --- backend (Render server) progress state ---
+  const [progress, setProgress] = useState<ProgressSummary | null>(null);
+  const [progressBusy, setProgressBusy] = useState(false);
+  const [progressErr, setProgressErr] = useState<string | null>(null);
 
   const key = (item: VocabItem) => `${c.id}:${item.id}`;
   const all = useMemo(() => [...c.vocabulary, ...custom], [c.vocabulary, custom]);
@@ -82,6 +89,27 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
 
   const STATUS_FILTERS: StatusFilter[] = ["all", "new", "learning", "known"];
 
+  async function checkProgress() {
+    setProgressBusy(true);
+    setProgressErr(null);
+    try {
+      setProgress(await fetchProgress());
+    } catch (e) {
+      setProgressErr(e instanceof Error ? e.message : "Request failed");
+      setProgress(null);
+    } finally {
+      setProgressBusy(false);
+    }
+  }
+
+  // Toggle a card "known" locally, and best-effort record the new state on the
+  // server so GET /progress reflects real activity (failures are ignored).
+  function markKnown(item: VocabItem) {
+    const next = statusOf(item, key(item), known) === "known" ? "learning" : "known";
+    onKnow(key(item));
+    postProgress(item.deck, item.id, next).catch(() => {});
+  }
+
   return (
     <>
       <h2 className="section-title">
@@ -90,6 +118,44 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
       </h2>
 
       <RomanToggle system={c.romanSystem} value={romanPref} onChange={onRomanPref} />
+
+      {/* progress check (Render server) */}
+      <div className="backend-panel panel">
+        <div className="bp-row">
+          <button className="btn ghost small" onClick={checkProgress} disabled={progressBusy}>
+            {progressBusy ? "Checking…" : "Check my progress"}
+          </button>
+        </div>
+        {progressErr && <p className="bp-msg err">{progressErr}</p>}
+        {progress && (
+          <div className="bp-summary">
+            <span className="bp-total">{progress.cards} card{progress.cards === 1 ? "" : "s"} tracked on the server</span>
+            {progress.cards === 0 ? (
+              <span className="bp-hint">Mark some words “known” to record them, then check again.</span>
+            ) : (
+              <div className="bp-decks">
+                {Object.entries(progress.decks).map(([d, counts]) => (
+                  <div key={d} className="bp-deck">
+                    <span className="bp-deck-name">{d}</span>
+                    <span className="bp-counts">
+                      <em className="s-known">{counts.known} known</em> ·{" "}
+                      {counts.learning} learning · {counts.new} new
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* generate new content — shared panel, renders into the existing VocabCard */}
+      <h3 className="block-title">Generate new content</h3>
+      <GeneratePanel
+        section="vocab"
+        types={["vocab", "sentence", "reading"]}
+        deck={deck === "all" ? "essential everyday vocabulary" : deck}
+      />
 
       {/* summary */}
       <div className="vocab-summary panel">
@@ -150,7 +216,7 @@ export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) 
               item={item}
               lang={c}
               status={statusOf(item, key(item), known)}
-              onKnow={() => onKnow(key(item))}
+              onKnow={() => markKnown(item)}
               showRoman={romanPref !== "off"}
             />
           ))}

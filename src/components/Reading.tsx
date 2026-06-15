@@ -3,6 +3,7 @@ import type { LangContent, PassageQuestion, ReadingLine, RomanPref } from "../ty
 import { speak } from "../speech";
 import { SectionHead } from "./SectionHead";
 import { RomanToggle } from "./RomanToggle";
+import { GeneratePanel } from "./GeneratePanel";
 import { PlayIcon } from "./icons";
 
 interface Props {
@@ -88,6 +89,9 @@ export function Reading({ c, romanPref, onRomanPref }: Props) {
       <SectionHead mark={c.marks.reading} title="Reading" sub={`Tap a line to reveal ${c.romanSystem} + translation`} />
 
       <RomanToggle system={c.romanSystem} value={romanPref} onChange={onRomanPref} />
+
+      <h3 className="block-title">Generate a new passage</h3>
+      <GeneratePanel section="reading" types={["reading"]} deck="a short reading passage" />
 
       <div className="read-tabs" role="group" aria-label="Choose a passage">
         {c.reading.passages.map((p) => (
