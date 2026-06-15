@@ -58,16 +58,51 @@ export interface ConverseSeed {
   followups: ChatLine[];
 }
 
+/** One line of a reading passage; tap reveals reading + translation and plays audio. */
+export interface ReadingLine {
+  glyph: string;
+  roman: string;
+  translation: string;
+}
+
+export interface Passage {
+  id: string;
+  kind: string; // "News" | "Story"
+  title: ReadingLine;
+  lines: ReadingLine[];
+}
+
+export interface QuizOption {
+  glyph: string;
+  correct: boolean;
+}
+
+export interface QuizQuestion {
+  id: string;
+  prompt: string;
+  options: QuizOption[];
+}
+
+/** The CJK character that labels each section, per script (讀/读/読 …). */
+export interface SectionMarks {
+  reading: string;
+  practice: string;
+  progress: string;
+}
+
 export interface LangContent {
   id: LangId;
   pill: string;
   name: string;
   speechLang: string;
   romanSystem: string;
+  marks: SectionMarks;
   greeting: { glyph: string; roman: string; meaning: string };
   hero: Card;
   review: Card[];
   tone: { title: string; items: Tone[] };
   vocabulary: VocabItem[];
   converse: ConverseSeed;
+  reading: { passages: Passage[] };
+  practice: { questions: QuizQuestion[] };
 }

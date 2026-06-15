@@ -12,6 +12,7 @@ export const CONTENT: Record<LangId, LangContent> = {
     name: "Mandarin",
     speechLang: "zh-CN",
     romanSystem: "Pinyin",
+    marks: { reading: "读", practice: "练", progress: "进" },
     greeting: { glyph: "早安", roman: "zǎo ān", meaning: "good morning" },
     hero: {
       id: "cmn-tea",
@@ -83,6 +84,32 @@ export const CONTENT: Record<LangId, LangContent> = {
         { glyph: "一共二十块，谢谢！", roman: "yí gòng èr shí kuài, xiè xie!", translation: "That's 20 yuan in total, thanks!" },
       ],
     },
+    reading: {
+      passages: [
+        { id: "weather", kind: "News", title: { glyph: "今天天气", roman: "jīn tiān tiān qì", translation: "Today's weather" },
+          lines: [
+            { glyph: "今天天气很好。", roman: "jīn tiān tiān qì hěn hǎo.", translation: "The weather is lovely today." },
+            { glyph: "北京有太阳。", roman: "běi jīng yǒu tài yáng.", translation: "It's sunny in Beijing." },
+            { glyph: "很多人去公园。", roman: "hěn duō rén qù gōng yuán.", translation: "Lots of people go to the park." },
+            { glyph: "他们喝茶，聊天。", roman: "tā men hē chá, liáo tiān.", translation: "They drink tea and chat." },
+          ] },
+        { id: "cat", kind: "Story", title: { glyph: "小猫和鱼", roman: "xiǎo māo hé yú", translation: "The cat and the fish" },
+          lines: [
+            { glyph: "小猫很饿。", roman: "xiǎo māo hěn è.", translation: "The kitten is hungry." },
+            { glyph: "它看见一条鱼。", roman: "tā kàn jiàn yì tiáo yú.", translation: "It spots a fish." },
+            { glyph: "鱼在水里游。", roman: "yú zài shuǐ lǐ yóu.", translation: "The fish swims in the water." },
+            { glyph: "小猫等了很久。", roman: "xiǎo māo děng le hěn jiǔ.", translation: "The kitten waited a long time." },
+          ] },
+      ],
+    },
+    practice: {
+      questions: [
+        { id: "q1", prompt: "Which character means “tea”?", options: [ { glyph: "茶", correct: true }, { glyph: "水", correct: false }, { glyph: "米", correct: false }, { glyph: "火", correct: false } ] },
+        { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "朋友", correct: true }, { glyph: "工作", correct: false }, { glyph: "时间", correct: false }, { glyph: "谢谢", correct: false } ] },
+        { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "你好", correct: true }, { glyph: "再见", correct: false }, { glyph: "对不起", correct: false }, { glyph: "谢谢", correct: false } ] },
+        { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "茶", correct: false }, { glyph: "饭", correct: false }, { glyph: "酒", correct: false } ] },
+      ],
+    },
   },
 
   yue: {
@@ -91,6 +118,7 @@ export const CONTENT: Record<LangId, LangContent> = {
     name: "Cantonese",
     speechLang: "zh-HK",
     romanSystem: "Jyutping",
+    marks: { reading: "讀", practice: "練", progress: "進" },
     greeting: { glyph: "早晨", roman: "zou2 san4", meaning: "good morning" },
     hero: {
       id: "yue-tea",
@@ -164,6 +192,32 @@ export const CONTENT: Record<LangId, LangContent> = {
         { glyph: "一共二十蚊,唔該！", roman: "jat1 gung6 ji6 sap6 man1, m4 goi1!", translation: "Twenty dollars in total, thanks!" },
       ],
     },
+    reading: {
+      passages: [
+        { id: "weather", kind: "News", title: { glyph: "今日天氣", roman: "gam1 jat6 tin1 hei3", translation: "Today's weather" },
+          lines: [
+            { glyph: "今日天氣好好。", roman: "gam1 jat6 tin1 hei3 hou2 hou2.", translation: "The weather is great today." },
+            { glyph: "香港出太陽。", roman: "hoeng1 gong2 ceot1 taai3 joeng4.", translation: "It's sunny in Hong Kong." },
+            { glyph: "好多人去公園。", roman: "hou2 do1 jan4 heoi3 gung1 jyun2.", translation: "Lots of people go to the park." },
+            { glyph: "佢哋飲茶傾偈。", roman: "keoi5 dei6 jam2 caa4 king1 gai2.", translation: "They drink tea and chat." },
+          ] },
+        { id: "cat", kind: "Story", title: { glyph: "貓仔同魚", roman: "maau1 zai2 tung4 jyu2", translation: "The kitten and the fish" },
+          lines: [
+            { glyph: "貓仔好肚餓。", roman: "maau1 zai2 hou2 tou5 ngo6.", translation: "The kitten is hungry." },
+            { glyph: "佢見到一條魚。", roman: "keoi5 gin3 dou2 jat1 tiu4 jyu2.", translation: "It spots a fish." },
+            { glyph: "條魚喺水度游。", roman: "tiu4 jyu2 hai2 seoi2 dou6 jau4.", translation: "The fish swims in the water." },
+            { glyph: "貓仔等咗好耐。", roman: "maau1 zai2 dang2 zo2 hou2 noi6.", translation: "The kitten waited a long time." },
+          ] },
+      ],
+    },
+    practice: {
+      questions: [
+        { id: "q1", prompt: "Which character means “tea”?", options: [ { glyph: "茶", correct: true }, { glyph: "水", correct: false }, { glyph: "飯", correct: false }, { glyph: "火", correct: false } ] },
+        { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "朋友", correct: true }, { glyph: "返工", correct: false }, { glyph: "時間", correct: false }, { glyph: "多謝", correct: false } ] },
+        { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "你好", correct: true }, { glyph: "拜拜", correct: false }, { glyph: "唔該", correct: false }, { glyph: "早晨", correct: false } ] },
+        { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "茶", correct: false }, { glyph: "飯", correct: false }, { glyph: "啤酒", correct: false } ] },
+      ],
+    },
   },
 
   jpn: {
@@ -172,6 +226,7 @@ export const CONTENT: Record<LangId, LangContent> = {
     name: "Japanese",
     speechLang: "ja-JP",
     romanSystem: "Rōmaji",
+    marks: { reading: "読", practice: "練", progress: "進" },
     greeting: { glyph: "おはよう", roman: "ohayō", meaning: "good morning" },
     hero: {
       id: "jpn-tea",
@@ -241,6 +296,32 @@ export const CONTENT: Record<LangId, LangContent> = {
         { glyph: "かしこまりました。他には？", roman: "kashikomarimashita. hoka ni wa?", translation: "Certainly. Anything else?",
           feedback: "Great. Ending with です/ます keeps it polite — you did that well." },
         { glyph: "全部で五百円です。ありがとうございます！", roman: "zenbu de gohyaku-en desu. arigatō gozaimasu!", translation: "That's 500 yen in total. Thank you!" },
+      ],
+    },
+    reading: {
+      passages: [
+        { id: "weather", kind: "News", title: { glyph: "今日の天気", roman: "kyō no tenki", translation: "Today's weather" },
+          lines: [
+            { glyph: "今日はいい天気です。", roman: "kyō wa ii tenki desu.", translation: "The weather is nice today." },
+            { glyph: "東京は晴れです。", roman: "tōkyō wa hare desu.", translation: "It's sunny in Tokyo." },
+            { glyph: "多くの人が公園に行きます。", roman: "ōku no hito ga kōen ni ikimasu.", translation: "Many people go to the park." },
+            { glyph: "お茶を飲んで話します。", roman: "o-cha o nonde hanashimasu.", translation: "They drink tea and talk." },
+          ] },
+        { id: "cat", kind: "Story", title: { glyph: "猫と魚", roman: "neko to sakana", translation: "The cat and the fish" },
+          lines: [
+            { glyph: "猫はお腹がすいています。", roman: "neko wa onaka ga suite imasu.", translation: "The cat is hungry." },
+            { glyph: "魚を一匹見つけました。", roman: "sakana o ippiki mitsukemashita.", translation: "It found a fish." },
+            { glyph: "魚は水の中を泳ぎます。", roman: "sakana wa mizu no naka o oyogimasu.", translation: "The fish swims in the water." },
+            { glyph: "猫は長い間待ちました。", roman: "neko wa nagai aida machimashita.", translation: "The cat waited a long time." },
+          ] },
+      ],
+    },
+    practice: {
+      questions: [
+        { id: "q1", prompt: "Which means “tea”?", options: [ { glyph: "お茶", correct: true }, { glyph: "水", correct: false }, { glyph: "ご飯", correct: false }, { glyph: "火", correct: false } ] },
+        { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "友達", correct: true }, { glyph: "仕事", correct: false }, { glyph: "時間", correct: false }, { glyph: "ありがとう", correct: false } ] },
+        { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "こんにちは", correct: true }, { glyph: "さようなら", correct: false }, { glyph: "ありがとう", correct: false }, { glyph: "おはよう", correct: false } ] },
+        { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "お茶", correct: false }, { glyph: "ご飯", correct: false }, { glyph: "ビール", correct: false } ] },
       ],
     },
   },

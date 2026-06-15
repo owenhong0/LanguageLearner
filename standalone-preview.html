@@ -297,6 +297,100 @@
     .mode-toggle{align-self:flex-start}
     .chat-row{max-width:90%}
   }
+  /* ---------- section header (CJK mark in 田字格) ---------- */
+  .sec-head{display:flex;align-items:center;gap:16px;margin:6px 0 16px}
+  .sec-tian{width:62px;height:62px;flex:none}
+  .sec-tian .ch{font-size:38px}
+  .sec-h2{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;font-size:26px;line-height:1}
+  .sec-sub{font-family:var(--mono);font-size:12px;color:var(--soft);margin-top:5px;letter-spacing:.02em}
+  .block-title{font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-0.01em;margin:26px 0 12px}
+
+  /* ---------- reading ---------- */
+  .read-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .reader{padding:28px 30px;animation:fade .4s ease both}
+  .reader-head{border-bottom:1px dashed var(--line);padding-bottom:16px;margin-bottom:8px}
+  .reader-kind{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--seal)}
+  .reader-title{font-family:var(--cjk);font-size:34px;line-height:1.2;margin:8px 0 4px;color:var(--ink)}
+  .reader-rom{font-family:var(--mono);color:var(--seal);font-size:14px}
+  .reader-trans{color:var(--soft);font-size:14px;margin-top:2px}
+  .reader-body{display:flex;flex-direction:column}
+  .read-line{padding:14px 0;border-bottom:1px dashed var(--line)}
+  .read-main{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
+  .read-glyph{font-family:var(--cjk);font-size:24px;line-height:1.5;color:var(--ink);background:none;border:0;text-align:left;cursor:pointer;padding:0;flex:1}
+  .read-glyph:hover{color:var(--seal)}
+  .read-glyph:focus-visible{outline:2px solid var(--indigo);outline-offset:3px;border-radius:4px}
+  .line-play{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--seal);display:grid;place-items:center;cursor:pointer;margin-top:4px}
+  .line-play svg{width:13px;height:13px}
+  .line-play:hover{border-color:var(--seal)}
+  .line-play:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .read-reveal{margin-top:8px;display:flex;flex-direction:column;gap:2px;padding-left:2px}
+  .read-rom{font-family:var(--mono);color:var(--seal);font-size:13px}
+  .read-trans{color:var(--soft);font-size:14px}
+  .reader-playall{margin-top:18px}
+
+  /* ---------- practice ---------- */
+  .trace{display:grid;grid-template-columns:auto 1fr;gap:26px;padding:24px;align-items:center;margin-bottom:8px}
+  .trace-grid{width:170px;height:170px}
+  .trace-ghost{font-size:108px;color:color-mix(in srgb,var(--ink) 26%,transparent)}
+  .trace-meta .trace-roman{font-family:var(--mono);color:var(--seal);font-size:16px;margin-top:6px}
+  .trace-meaning{font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:-0.02em;margin:2px 0 0}
+  .trace-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .quiz{padding:24px}
+  .quiz-progress{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:12px;color:var(--soft);margin-bottom:18px}
+  .quiz-progress .mbar{flex:1;max-width:none}
+  .quiz-prompt{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-0.01em;margin-bottom:16px}
+  .quiz-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+  .quiz-opt{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 14px;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:84px;transition:transform .12s ease,border-color .15s,background .15s}
+  .quiz-opt:hover:not(:disabled){transform:translateY(-2px);border-color:var(--soft)}
+  .quiz-opt:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .quiz-opt:disabled{cursor:default}
+  .qo-glyph{font-family:var(--cjk);font-size:30px;color:var(--ink)}
+  .quiz-opt.correct{border-color:var(--jade);background:color-mix(in srgb,var(--jade) 10%,var(--card))}
+  .quiz-opt.wrong{border-color:var(--seal);background:color-mix(in srgb,var(--seal) 9%,var(--card))}
+  .quiz-opt.dim{opacity:.5}
+  .qo-mark{position:absolute;top:8px;right:10px;font-size:13px;display:grid;place-items:center}
+  .qo-mark svg{width:16px;height:16px}
+  .correct-mark{color:var(--jade)}
+  .wrong-mark{color:var(--seal);font-family:var(--mono)}
+  .quiz-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;flex-wrap:wrap}
+  .quiz-verdict{font-family:var(--mono);font-size:13px;letter-spacing:.04em}
+  .quiz-verdict.ok{color:var(--jade)}
+  .quiz-verdict.no{color:var(--seal)}
+  .quiz-result{display:flex;align-items:center;gap:22px;padding:26px;flex-wrap:wrap}
+  .result-ring{flex:none;width:96px;height:96px;border-radius:50%;border:3px solid var(--jade);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px;color:var(--jade)}
+  .result-title{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-0.01em}
+  .result-note{color:var(--soft);margin:4px 0 14px;max-width:48ch}
+
+  /* ---------- progress ---------- */
+  .prog-top{display:grid;grid-template-columns:auto 1fr;gap:18px;margin-bottom:8px}
+  .acc-card{padding:22px;display:flex;flex-direction:column;align-items:center;gap:10px;min-width:200px}
+  .acc-note{color:var(--soft);font-size:12.5px;text-align:center;max-width:24ch}
+  .prog-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .pstat{padding:20px 22px}
+  .pstat .n{font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:-0.02em;line-height:1}
+  .pstat .k{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);margin-top:6px}
+  .mastery-list{display:flex;flex-direction:column;gap:12px}
+  .mastery-row{display:flex;align-items:center;gap:16px;padding:16px 20px}
+  .mr-name{font-family:var(--display);font-weight:600;font-size:15px;min-width:150px;display:flex;align-items:baseline;gap:10px}
+  .mr-count{font-family:var(--mono);font-size:12px;color:var(--soft);font-weight:400}
+  .mastery-row .mbar{flex:1}
+  .mastery-row .seal-reward{width:40px;height:40px;font-size:22px}
+  .seal-wall{display:flex;gap:14px;flex-wrap:wrap}
+  .seal-slot{width:120px;height:120px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .seal-slot.earned{background:var(--seal);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.1)}
+  .seal-slot.earned .seal-glyph{font-family:var(--cjk);font-weight:700;font-size:40px;transform:rotate(-5deg)}
+  .seal-slot.empty{border:1.5px dashed var(--line);color:var(--soft)}
+  .seal-slot.empty .seal-glyph{font-family:var(--mono);font-size:22px}
+  .seal-cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em}
+  .seal-slot.earned .seal-cap{color:rgba(255,255,255,.85)}
+
+  @media (max-width:760px){
+    .trace{grid-template-columns:1fr;justify-items:center;text-align:center}
+    .trace-actions{justify-content:center}
+    .prog-top{grid-template-columns:1fr}
+    .quiz-result{flex-direction:column;text-align:center}
+    .mr-name{min-width:0}
+  }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important}
     .flip-inner{transition:none !important}
@@ -322,11 +416,18 @@ interface VocabItem { id: string; glyph: string; roman: string; meaning: string;
 interface ChatLine { glyph: string; roman: string; translation: string; feedback?: string }
 interface Scenario { id: string; label: string; opener: ChatLine }
 interface ConverseSeed { scenarios: Scenario[]; suggestions: ChatLine[]; followups: ChatLine[] }
+interface ReadingLine { glyph: string; roman: string; translation: string }
+interface Passage { id: string; kind: string; title: ReadingLine; lines: ReadingLine[] }
+interface QuizOption { glyph: string; correct: boolean }
+interface QuizQuestion { id: string; prompt: string; options: QuizOption[] }
+interface SectionMarks { reading: string; practice: string; progress: string }
 interface LangContent {
   id: LangId; pill: string; name: string; speechLang: string; romanSystem: string;
+  marks: SectionMarks;
   greeting: { glyph: string; roman: string; meaning: string };
   hero: Card; review: Card[]; tone: { title: string; items: Tone[] };
   vocabulary: VocabItem[]; converse: ConverseSeed;
+  reading: { passages: Passage[] }; practice: { questions: QuizQuestion[] };
 }
 type VocabStatus = "new" | "learning" | "known";
 
@@ -345,6 +446,7 @@ function speak(text: string, lang: string) {
 const CONTENT: Record<LangId, LangContent> = {
   cmn: {
     id: "cmn", pill: "普", name: "Mandarin", speechLang: "zh-CN", romanSystem: "Pinyin",
+    marks: { reading: "读", practice: "练", progress: "进" },
     greeting: { glyph: "早安", roman: "zǎo ān", meaning: "good morning" },
     hero: { id: "cmn-tea", glyph: "茶", roman: "chá", meaning: "tea", anchor: "🍵",
       example: { glyph: "喝茶", roman: "hē chá", gloss: "to drink tea" } },
@@ -393,9 +495,30 @@ const CONTENT: Record<LangId, LangContent> = {
         { glyph: "一共二十块，谢谢！", roman: "yí gòng èr shí kuài, xiè xie!", translation: "That's 20 yuan in total, thanks!" },
       ],
     },
+    reading: { passages: [
+      { id: "weather", kind: "News", title: { glyph: "今天天气", roman: "jīn tiān tiān qì", translation: "Today's weather" }, lines: [
+        { glyph: "今天天气很好。", roman: "jīn tiān tiān qì hěn hǎo.", translation: "The weather is lovely today." },
+        { glyph: "北京有太阳。", roman: "běi jīng yǒu tài yáng.", translation: "It's sunny in Beijing." },
+        { glyph: "很多人去公园。", roman: "hěn duō rén qù gōng yuán.", translation: "Lots of people go to the park." },
+        { glyph: "他们喝茶，聊天。", roman: "tā men hē chá, liáo tiān.", translation: "They drink tea and chat." },
+      ] },
+      { id: "cat", kind: "Story", title: { glyph: "小猫和鱼", roman: "xiǎo māo hé yú", translation: "The cat and the fish" }, lines: [
+        { glyph: "小猫很饿。", roman: "xiǎo māo hěn è.", translation: "The kitten is hungry." },
+        { glyph: "它看见一条鱼。", roman: "tā kàn jiàn yì tiáo yú.", translation: "It spots a fish." },
+        { glyph: "鱼在水里游。", roman: "yú zài shuǐ lǐ yóu.", translation: "The fish swims in the water." },
+        { glyph: "小猫等了很久。", roman: "xiǎo māo děng le hěn jiǔ.", translation: "The kitten waited a long time." },
+      ] },
+    ] },
+    practice: { questions: [
+      { id: "q1", prompt: "Which character means “tea”?", options: [ { glyph: "茶", correct: true }, { glyph: "水", correct: false }, { glyph: "米", correct: false }, { glyph: "火", correct: false } ] },
+      { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "朋友", correct: true }, { glyph: "工作", correct: false }, { glyph: "时间", correct: false }, { glyph: "谢谢", correct: false } ] },
+      { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "你好", correct: true }, { glyph: "再见", correct: false }, { glyph: "对不起", correct: false }, { glyph: "谢谢", correct: false } ] },
+      { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "茶", correct: false }, { glyph: "饭", correct: false }, { glyph: "酒", correct: false } ] },
+    ] },
   },
   yue: {
     id: "yue", pill: "粵", name: "Cantonese", speechLang: "zh-HK", romanSystem: "Jyutping",
+    marks: { reading: "讀", practice: "練", progress: "進" },
     greeting: { glyph: "早晨", roman: "zou2 san4", meaning: "good morning" },
     hero: { id: "yue-tea", glyph: "茶", roman: "caa4", meaning: "tea", anchor: "🍵",
       example: { glyph: "飲茶", roman: "jam2 caa4", gloss: "to go for dim sum" } },
@@ -446,9 +569,30 @@ const CONTENT: Record<LangId, LangContent> = {
         { glyph: "一共二十蚊,唔該！", roman: "jat1 gung6 ji6 sap6 man1, m4 goi1!", translation: "Twenty dollars in total, thanks!" },
       ],
     },
+    reading: { passages: [
+      { id: "weather", kind: "News", title: { glyph: "今日天氣", roman: "gam1 jat6 tin1 hei3", translation: "Today's weather" }, lines: [
+        { glyph: "今日天氣好好。", roman: "gam1 jat6 tin1 hei3 hou2 hou2.", translation: "The weather is great today." },
+        { glyph: "香港出太陽。", roman: "hoeng1 gong2 ceot1 taai3 joeng4.", translation: "It's sunny in Hong Kong." },
+        { glyph: "好多人去公園。", roman: "hou2 do1 jan4 heoi3 gung1 jyun2.", translation: "Lots of people go to the park." },
+        { glyph: "佢哋飲茶傾偈。", roman: "keoi5 dei6 jam2 caa4 king1 gai2.", translation: "They drink tea and chat." },
+      ] },
+      { id: "cat", kind: "Story", title: { glyph: "貓仔同魚", roman: "maau1 zai2 tung4 jyu2", translation: "The kitten and the fish" }, lines: [
+        { glyph: "貓仔好肚餓。", roman: "maau1 zai2 hou2 tou5 ngo6.", translation: "The kitten is hungry." },
+        { glyph: "佢見到一條魚。", roman: "keoi5 gin3 dou2 jat1 tiu4 jyu2.", translation: "It spots a fish." },
+        { glyph: "條魚喺水度游。", roman: "tiu4 jyu2 hai2 seoi2 dou6 jau4.", translation: "The fish swims in the water." },
+        { glyph: "貓仔等咗好耐。", roman: "maau1 zai2 dang2 zo2 hou2 noi6.", translation: "The kitten waited a long time." },
+      ] },
+    ] },
+    practice: { questions: [
+      { id: "q1", prompt: "Which character means “tea”?", options: [ { glyph: "茶", correct: true }, { glyph: "水", correct: false }, { glyph: "飯", correct: false }, { glyph: "火", correct: false } ] },
+      { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "朋友", correct: true }, { glyph: "返工", correct: false }, { glyph: "時間", correct: false }, { glyph: "多謝", correct: false } ] },
+      { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "你好", correct: true }, { glyph: "拜拜", correct: false }, { glyph: "唔該", correct: false }, { glyph: "早晨", correct: false } ] },
+      { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "茶", correct: false }, { glyph: "飯", correct: false }, { glyph: "啤酒", correct: false } ] },
+    ] },
   },
   jpn: {
     id: "jpn", pill: "日", name: "Japanese", speechLang: "ja-JP", romanSystem: "Rōmaji",
+    marks: { reading: "読", practice: "練", progress: "進" },
     greeting: { glyph: "おはよう", roman: "ohayō", meaning: "good morning" },
     hero: { id: "jpn-tea", glyph: "茶", roman: "cha", meaning: "tea", anchor: "🍵",
       example: { glyph: "お茶", roman: "o-cha", gloss: "(green) tea" } },
@@ -497,6 +641,26 @@ const CONTENT: Record<LangId, LangContent> = {
         { glyph: "全部で五百円です。ありがとうございます！", roman: "zenbu de gohyaku-en desu. arigatō gozaimasu!", translation: "That's 500 yen in total. Thank you!" },
       ],
     },
+    reading: { passages: [
+      { id: "weather", kind: "News", title: { glyph: "今日の天気", roman: "kyō no tenki", translation: "Today's weather" }, lines: [
+        { glyph: "今日はいい天気です。", roman: "kyō wa ii tenki desu.", translation: "The weather is nice today." },
+        { glyph: "東京は晴れです。", roman: "tōkyō wa hare desu.", translation: "It's sunny in Tokyo." },
+        { glyph: "多くの人が公園に行きます。", roman: "ōku no hito ga kōen ni ikimasu.", translation: "Many people go to the park." },
+        { glyph: "お茶を飲んで話します。", roman: "o-cha o nonde hanashimasu.", translation: "They drink tea and talk." },
+      ] },
+      { id: "cat", kind: "Story", title: { glyph: "猫と魚", roman: "neko to sakana", translation: "The cat and the fish" }, lines: [
+        { glyph: "猫はお腹がすいています。", roman: "neko wa onaka ga suite imasu.", translation: "The cat is hungry." },
+        { glyph: "魚を一匹見つけました。", roman: "sakana o ippiki mitsukemashita.", translation: "It found a fish." },
+        { glyph: "魚は水の中を泳ぎます。", roman: "sakana wa mizu no naka o oyogimasu.", translation: "The fish swims in the water." },
+        { glyph: "猫は長い間待ちました。", roman: "neko wa nagai aida machimashita.", translation: "The cat waited a long time." },
+      ] },
+    ] },
+    practice: { questions: [
+      { id: "q1", prompt: "Which means “tea”?", options: [ { glyph: "お茶", correct: true }, { glyph: "水", correct: false }, { glyph: "ご飯", correct: false }, { glyph: "火", correct: false } ] },
+      { id: "q2", prompt: "Which means “friend”?", options: [ { glyph: "友達", correct: true }, { glyph: "仕事", correct: false }, { glyph: "時間", correct: false }, { glyph: "ありがとう", correct: false } ] },
+      { id: "q3", prompt: "Pick the greeting for “hello”.", options: [ { glyph: "こんにちは", correct: true }, { glyph: "さようなら", correct: false }, { glyph: "ありがとう", correct: false }, { glyph: "おはよう", correct: false } ] },
+      { id: "q4", prompt: "Which means “water”?", options: [ { glyph: "水", correct: true }, { glyph: "お茶", correct: false }, { glyph: "ご飯", correct: false }, { glyph: "ビール", correct: false } ] },
+    ] },
   },
 };
 
@@ -918,6 +1082,197 @@ function Converse({ c }:{ c: LangContent }) {
   );
 }
 
+/* --------------------------- section head ------------------------- */
+function SectionHead({ mark, title, sub }:{ mark: string; title: string; sub?: string }) {
+  return (
+    <div className="sec-head">
+      <div className="tian sec-tian"><span className="ch">{mark}</span></div>
+      <div><h2 className="sec-h2">{title}</h2>{sub && <div className="sec-sub">{sub}</div>}</div>
+    </div>
+  );
+}
+
+/* ----------------------------- reading ---------------------------- */
+function ReadLine({ line, lang }:{ line: ReadingLine; lang: LangContent }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="read-line">
+      <div className="read-main">
+        <button className="read-glyph" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Reveal reading and translation">{line.glyph}</button>
+        <button className="line-play" onClick={() => speak(line.glyph, lang.speechLang)} aria-label="Play line"><PlayIcon /></button>
+      </div>
+      {open && (<div className="read-reveal"><span className="read-rom">{line.roman}</span><span className="read-trans">“{line.translation}”</span></div>)}
+    </div>
+  );
+}
+function Reading({ c }:{ c: LangContent }) {
+  const [passageId, setPassageId] = useState(c.reading.passages[0].id);
+  const passage = useMemo(() => c.reading.passages.find((p) => p.id === passageId) || c.reading.passages[0], [c, passageId]);
+  return (
+    <>
+      <SectionHead mark={c.marks.reading} title="Reading" sub={"Tap a line to reveal " + c.romanSystem + " + translation"} />
+      <div className="read-tabs" role="group" aria-label="Choose a passage">
+        {c.reading.passages.map((p) => (
+          <button key={p.id} className={"chip" + (p.id === passageId ? " active" : "")} aria-pressed={p.id === passageId} onClick={() => setPassageId(p.id)}>{p.kind} · {p.title.translation}</button>
+        ))}
+      </div>
+      <article className="reader panel" key={passage.id}>
+        <header className="reader-head">
+          <span className="reader-kind">{passage.kind}</span>
+          <h3 className="reader-title">{passage.title.glyph}</h3>
+          <div className="reader-rom">{passage.title.roman}</div>
+          <div className="reader-trans">“{passage.title.translation}”</div>
+        </header>
+        <div className="reader-body">
+          {passage.lines.map((line, i) => (<ReadLine key={i} line={line} lang={c} />))}
+        </div>
+        <button className="btn ghost reader-playall" onClick={() => speak(passage.lines.map((l) => l.glyph).join(" "), c.speechLang)}><span className="play"><PlayIcon /> Read the whole passage</span></button>
+      </article>
+    </>
+  );
+}
+
+/* ----------------------------- practice --------------------------- */
+function Practice({ c, onAnswer }:{ c: LangContent; onAnswer: (correct: boolean) => void }) {
+  const [traceIdx, setTraceIdx] = useState(0);
+  const trace = c.vocabulary[traceIdx % c.vocabulary.length];
+  const [qIdx, setQIdx] = useState(0);
+  const [picked, setPicked] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+  const questions = c.practice.questions;
+  const q = questions[qIdx];
+
+  function choose(i: number) {
+    if (picked !== null) return;
+    setPicked(i);
+    const correct = q.options[i].correct;
+    if (correct) setScore((s) => s + 1);
+    onAnswer(correct);
+  }
+  function next() { if (qIdx + 1 >= questions.length) setDone(true); else { setQIdx((i) => i + 1); setPicked(null); } }
+  function restart() { setQIdx(0); setPicked(null); setScore(0); setDone(false); }
+
+  return (
+    <>
+      <SectionHead mark={c.marks.practice} title="Practice" sub="Trace a character, then test yourself" />
+      <div className="trace panel">
+        <div className="tian trace-grid"><span className="ch trace-ghost">{trace.glyph}</span></div>
+        <div className="trace-meta">
+          <div className="eyebrow">Trace · follow the strokes inside the grid</div>
+          <div className="trace-roman">{trace.roman}</div>
+          <div className="trace-meaning">{trace.meaning}</div>
+          <div className="trace-actions">
+            <button className="btn play" onClick={() => speak(trace.glyph, c.speechLang)}><PlayIcon /> Hear it</button>
+            <button className="btn ghost" onClick={() => setTraceIdx((i) => i + 1)}>Next character →</button>
+          </div>
+        </div>
+      </div>
+      <h3 className="block-title">Quick quiz</h3>
+      {!done ? (
+        <div className="quiz panel">
+          <div className="quiz-progress">
+            <span>Question {qIdx + 1} / {questions.length}</span>
+            <div className="mbar" aria-hidden="true"><i style={{ width: ((qIdx + (picked !== null ? 1 : 0)) / questions.length) * 100 + "%" }} /></div>
+          </div>
+          <p className="quiz-prompt">{q.prompt}</p>
+          <div className="quiz-options">
+            {q.options.map((opt, i) => {
+              const isPicked = picked === i;
+              let state = "";
+              if (picked !== null) { if (opt.correct) state = " correct"; else if (isPicked) state = " wrong"; else state = " dim"; }
+              return (
+                <button key={i} className={"quiz-opt" + state} onClick={() => choose(i)} disabled={picked !== null}>
+                  <span className="qo-glyph">{opt.glyph}</span>
+                  {picked !== null && opt.correct && <span className="qo-mark correct-mark"><CheckIcon /></span>}
+                  {isPicked && !opt.correct && <span className="qo-mark wrong-mark">✕</span>}
+                </button>
+              );
+            })}
+          </div>
+          {picked !== null && (
+            <div className="quiz-foot">
+              <span className={"quiz-verdict " + (q.options[picked].correct ? "ok" : "no")}>{q.options[picked].correct ? "Correct" : "Not quite"}</span>
+              <button className="btn" onClick={next}>{qIdx + 1 >= questions.length ? "See results" : "Next question"}</button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="quiz-result panel">
+          <div className="result-ring">{score}/{questions.length}</div>
+          <div>
+            <div className="result-title">{score === questions.length ? "Perfect round" : "Round complete"}</div>
+            <p className="result-note">You got {score} of {questions.length} right. Your accuracy feeds the Progress tab.</p>
+            <button className="btn" onClick={restart}>Practice again</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ----------------------------- progress --------------------------- */
+function Progress({ c, vocabKnown, practice }:{ c: LangContent; vocabKnown: Set<string>; practice: { answered: number; correct: number } }) {
+  const isKnown = (id: string, srs: number) => vocabKnown.has(c.id + ":" + id) || srs >= 4;
+  const decks = VOCAB_DECKS.map((name) => {
+    const items = c.vocabulary.filter((v) => v.deck === name);
+    const known = items.filter((v) => isKnown(v.id, v.srs)).length;
+    const pct = items.length ? Math.round((known / items.length) * 100) : 0;
+    return { name, known, total: items.length, pct, sealed: pct === 100 };
+  });
+  const wordsKnown = decks.reduce((n, d) => n + d.known, 0);
+  const sealedCount = decks.filter((d) => d.sealed).length;
+  const accuracy = practice.answered ? Math.round((practice.correct / practice.answered) * 100) : null;
+  const r = 56, circ = 2 * Math.PI * r, pct = accuracy ?? 0;
+  return (
+    <>
+      <SectionHead mark={c.marks.progress} title="Progress" sub={"Your " + c.name + " so far"} />
+      <div className="prog-top">
+        <div className="panel acc-card">
+          <div className="ring" style={{ width: 134, height: 134 }} role="img" aria-label={accuracy === null ? "No quiz attempts yet" : "Quiz accuracy " + accuracy + " percent"}>
+            <svg width="134" height="134" viewBox="0 0 134 134">
+              <circle cx="67" cy="67" r={r} fill="none" stroke="var(--line)" strokeWidth="10" />
+              <circle cx="67" cy="67" r={r} fill="none" stroke="var(--jade)" strokeWidth="10" strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - pct / 100)} />
+            </svg>
+            <div className="center"><div>
+              <div className="big" style={{ fontSize: 26, color: accuracy === null ? "var(--soft)" : "var(--jade)" }}>{accuracy === null ? "—" : accuracy + "%"}</div>
+              <div className="lbl">quiz accuracy</div>
+            </div></div>
+          </div>
+          <p className="acc-note">{accuracy === null ? "Take a round in Practice to start tracking accuracy." : "From " + practice.answered + " question" + (practice.answered === 1 ? "" : "s") + " answered this session."}</p>
+        </div>
+        <div className="prog-stats">
+          <div className="panel pstat"><div className="n">{wordsKnown}</div><div className="k">words known</div></div>
+          <div className="panel pstat"><div className="n">{c.vocabulary.length}</div><div className="k">characters seen</div></div>
+          <div className="panel pstat"><div className="n">{sealedCount}</div><div className="k">decks sealed</div></div>
+          <div className="panel pstat"><div className="n">{c.tone.items.length}</div><div className="k">tones explored</div></div>
+        </div>
+      </div>
+      <h3 className="block-title">Deck mastery</h3>
+      <div className="mastery-list">
+        {decks.map((d) => (
+          <div key={d.name} className="mastery-row panel">
+            <div className="mr-name">{d.name}<span className="mr-count">{d.known}/{d.total}</span></div>
+            <div className="mbar" aria-hidden="true"><i style={{ width: d.pct + "%" }} /></div>
+            <span className={"seal-reward" + (d.sealed ? " show" : "")} title={d.sealed ? "Deck sealed" : ""} aria-hidden="true">通</span>
+          </div>
+        ))}
+      </div>
+      <h3 className="block-title">Seal collection</h3>
+      <div className="seal-wall">
+        {decks.map((d) => (
+          d.sealed ? (
+            <div key={d.name} className="seal-slot earned" title={d.name + " — mastered"}><span className="seal-glyph">{c.pill}</span><span className="seal-cap">{d.name}</span></div>
+          ) : (
+            <div key={d.name} className="seal-slot empty"><span className="seal-glyph">{d.pct}%</span><span className="seal-cap">{d.name}</span></div>
+          )
+        ))}
+      </div>
+      <p className="footnote">Every number here is computed from what you've actually marked known and the quiz rounds you've played — nothing is pre-filled. Seal a whole deck (100%) to stamp its 印.</p>
+    </>
+  );
+}
+
 /* ------------------------------- app ------------------------------ */
 function App() {
   const [lang, setLang] = useState<LangId>("cmn");
@@ -925,6 +1280,7 @@ function App() {
   const [known, setKnown] = useState<Set<string>>(() => new Set());
   const [vocabKnown, setVocabKnown] = useState<Set<string>>(() => new Set());
   const [bonus, setBonus] = useState(0);
+  const [practice, setPractice] = useState({ answered: 0, correct: 0 });
   const c = CONTENT[lang];
 
   const minutesDone = useMemo(() => {
@@ -934,6 +1290,7 @@ function App() {
 
   const handleKnow = useCallback((key: string) => { setKnown((prev) => { const n = new Set(prev); if (n.has(key)) n.delete(key); else n.add(key); return n; }); }, []);
   const handleVocabKnow = useCallback((key: string) => { setVocabKnown((prev) => { const n = new Set(prev); if (n.has(key)) n.delete(key); else n.add(key); return n; }); }, []);
+  const recordAnswer = useCallback((correct: boolean) => { setPractice((p) => ({ answered: p.answered + 1, correct: p.correct + (correct ? 1 : 0) })); }, []);
 
   return (
     <>
@@ -951,12 +1308,9 @@ function App() {
         )}
         {tab === "Converse" && <Converse c={c} />}
         {tab === "Vocabulary" && <Vocabulary c={c} known={vocabKnown} onKnow={handleVocabKnow} />}
-        {tab !== "Home" && tab !== "Converse" && tab !== "Vocabulary" && (
-          <div className="coming-soon panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>{tab}</h2>
-            <p>The <strong>{tab}</strong> surface isn’t built yet — Home, Converse and Vocabulary are live. Tell me which to design next and I’ll add it as its own component set.</p>
-          </div>
-        )}
+        {tab === "Reading" && <Reading c={c} />}
+        {tab === "Practice" && <Practice c={c} onAnswer={recordAnswer} />}
+        {tab === "Progress" && <Progress c={c} vocabKnown={vocabKnown} practice={practice} />}
       </main>
     </>
   );
