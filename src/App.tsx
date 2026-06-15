@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { LangId } from "./types";
 import { CONTENT, GOAL_TARGET } from "./content";
+import { loadProgress, saveProgress, clearProgress } from "./store";
 import { TopBar } from "./components/TopBar";
 import { Hero } from "./components/Hero";
 import { CharacterOfDay } from "./components/CharacterOfDay";
@@ -15,10 +16,19 @@ import { Progress } from "./components/Progress";
 export default function App() {
   const [lang, setLang] = useState<LangId>("cmn");
   const [tab, setTab] = useState<string>("Home");
-  const [known, setKnown] = useState<Set<string>>(() => new Set());
-  const [vocabKnown, setVocabKnown] = useState<Set<string>>(() => new Set());
-  const [bonus, setBonus] = useState(0);
-  const [practice, setPractice] = useState({ answered: 0, correct: 0 });
+
+  // Hydrate progress from localStorage once on mount (T2). loadProgress()
+  // returns empty progress on first visit or if the stored data is corrupt.
+  const initial = useMemo(loadProgress, []);
+  const [known, setKnown] = useState<Set<string>>(() => new Set(initial.known));
+  const [vocabKnown, setVocabKnown] = useState<Set<string>>(() => new Set(initial.vocabKnown));
+  const [bonus, setBonus] = useState(initial.bonus);
+  const [practice, setPractice] = useState(initial.practice);
+
+  // Persist whenever any tracked slice changes.
+  useEffect(() => {
+    saveProgress({ known: [...known], vocabKnown: [...vocabKnown], bonus, practice });
+  }, [known, vocabKnown, bonus, practice]);
 
   const c = CONTENT[lang];
 
@@ -36,6 +46,13 @@ export default function App() {
   }, []);
   const recordAnswer = useCallback((correct: boolean) => {
     setPractice((p) => ({ answered: p.answered + 1, correct: p.correct + (correct ? 1 : 0) }));
+  }, []);
+  const resetProgress = useCallback(() => {
+    clearProgress();
+    setKnown(new Set());
+    setVocabKnown(new Set());
+    setBonus(0);
+    setPractice({ answered: 0, correct: 0 });
   }, []);
 
   return (
@@ -62,7 +79,7 @@ export default function App() {
         {tab === "Vocabulary" && <Vocabulary c={c} known={vocabKnown} onKnow={handleVocabKnow} />}
         {tab === "Reading" && <Reading c={c} />}
         {tab === "Practice" && <Practice c={c} onAnswer={recordAnswer} />}
-        {tab === "Progress" && <Progress c={c} vocabKnown={vocabKnown} practice={practice} />}
+        {tab === "Progress" && <Progress c={c} vocabKnown={vocabKnown} practice={practice} onReset={resetProgress} />}
       </main>
     </>
   );

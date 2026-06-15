@@ -419,6 +419,12 @@ a { color: inherit; }
 .seal-cap { font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; }
 .seal-slot.earned .seal-cap { color: rgba(255,255,255,.85); }
 
+.prog-reset { margin-top: 18px; }
+.reset-confirm { display: flex; flex-direction: column; gap: 12px; max-width: 520px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+.reset-confirm > span { color: var(--soft); font-size: 13.5px; }
+.reset-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
 @media (max-width: 760px) {
   .trace { grid-template-columns: 1fr; justify-items: center; text-align: center; }
   .trace-cells { justify-content: center; }
