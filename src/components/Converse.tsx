@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LangContent } from "../types";
 import { ChatBubble, type ChatMsg } from "./ChatBubble";
+import { askTutor, isLiveTutorConfigured, type TutorTurn } from "../tutor";
 import { GeneratePanel } from "./GeneratePanel";
 
 interface Props {
@@ -19,8 +20,13 @@ export function Converse({ c }: Props) {
   const [input, setInput] = useState("");
   const [followIdx, setFollowIdx] = useState(0);
   const [listening, setListening] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [liveFailed, setLiveFailed] = useState(false);
 
   const threadRef = useRef<HTMLDivElement>(null);
+
+  // Whether a live tutor proxy (VITE_TUTOR_PROXY_URL) is configured (T1).
+  const live = isLiveTutorConfigured();
 
   const scenario = useMemo(
     () => c.converse.scenarios.find((s) => s.id === scenarioId) ?? c.converse.scenarios[0],
@@ -36,6 +42,8 @@ export function Converse({ c }: Props) {
     setMessages([{ id: nextId(), role: "tutor", line: scenario.opener }]);
     setFollowIdx(0);
     setInput("");
+    setLiveFailed(false);
+    setPending(false);
   }, [scenario, c.id]);
 
   // Keep the newest message in view (without scrollIntoView, which breaks the preview).
@@ -44,22 +52,40 @@ export function Converse({ c }: Props) {
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
 
-  function send(text: string) {
+  // The built-in scripted reply — used in demo mode and as the live fallback.
+  function scriptedReply(): ChatMsg {
+    setFollowIdx((i) => i + 1);
+    return {
+      id: nextId(),
+      role: "tutor",
+      line: c.converse.followups[followIdx % c.converse.followups.length],
+    };
+  }
+
+  async function send(text: string) {
     const t = text.trim();
-    if (!t) return;
+    if (!t || pending) return;
     const learner: ChatMsg = {
       id: nextId(),
       role: "learner",
       line: { glyph: t, roman: "", translation: "" },
     };
-    const reply: ChatMsg = {
-      id: nextId(),
-      role: "tutor",
-      line: c.converse.followups[followIdx % c.converse.followups.length],
-    };
-    setMessages((prev) => [...prev, learner, reply]);
-    setFollowIdx((i) => i + 1);
+    const history: TutorTurn[] = [...messages, learner].map((m) => ({ role: m.role, text: m.line.glyph }));
+    setMessages((prev) => [...prev, learner]);
     setInput("");
+
+    if (live) {
+      setPending(true);
+      const reply = await askTutor(c, scenario.label, history);
+      setPending(false);
+      if (reply) {
+        setMessages((prev) => [...prev, { id: nextId(), role: "tutor", line: reply }]);
+        return;
+      }
+      // Proxy unreachable / bad response — note it and drop to the scripted reply.
+      setLiveFailed(true);
+    }
+    setMessages((prev) => [...prev, scriptedReply()]);
   }
 
   function startListening() {
@@ -120,11 +146,24 @@ export function Converse({ c }: Props) {
         </div>
       </div>
 
+      {(!live || liveFailed) && (
+        <div className="tutor-mode-note" role="status">
+          {!live
+            ? "Live tutor needs a backend — running in scripted demo mode. Set VITE_TUTOR_PROXY_URL to connect one (see README)."
+            : "Live tutor unavailable right now — showing scripted replies."}
+        </div>
+      )}
+
       <div className="chat panel">
         <div className="chat-thread" ref={threadRef}>
           {messages.map((m) => (
             <ChatBubble key={m.id} msg={m} lang={c} />
           ))}
+          {pending && (
+            <div className="chat-row tutor" aria-live="polite">
+              <div className="bubble tutor typing">Tutor is typing…</div>
+            </div>
+          )}
         </div>
 
         <div className="suggestions" aria-label="Suggested replies">
@@ -159,8 +198,9 @@ export function Converse({ c }: Props) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") send(input); }}
             aria-label="Your message"
+            disabled={pending}
           />
-          <button className="btn" onClick={() => send(input)} disabled={!input.trim()}>
+          <button className="btn" onClick={() => send(input)} disabled={!input.trim() || pending}>
             Send
           </button>
         </div>
@@ -170,9 +210,16 @@ export function Converse({ c }: Props) {
       <GeneratePanel section="converse" types={["sentence"]} deck="everyday conversation" />
 
       <p className="footnote">
-        Tutor replies are <strong>scripted</strong> in this prototype so it runs with no backend. In
-        production the Converse tutor calls a live model through a server that holds the key — never the
-        browser. {mode === "speak" && !speechSupported && "Speech input isn't available in this browser; type instead."}
+        {live ? (
+          <>The Converse tutor calls a live model through <strong>VITE_TUTOR_PROXY_URL</strong>, a
+          server-side proxy that holds the API key — never the browser. If a request fails it falls
+          back to a scripted reply.</>
+        ) : (
+          <>Tutor replies are <strong>scripted</strong> so the app runs with no backend and no API key.
+          To enable a live tutor, point <strong>VITE_TUTOR_PROXY_URL</strong> at a server-side proxy
+          that holds the key (see README) — never put a key in the frontend.</>
+        )}{" "}
+        {mode === "speak" && !speechSupported && "Speech input isn't available in this browser; type instead."}
       </p>
     </>
   );
