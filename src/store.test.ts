@@ -16,13 +16,22 @@ describe("store — progress persistence", () => {
   beforeEach(() => localStorage.clear());
 
   it("returns empty progress on first visit (no stored data)", () => {
-    expect(loadProgress()).toEqual({ known: [], vocabKnown: [], bonus: 0, practice: { answered: 0, correct: 0 }, boxes: {} });
+    expect(loadProgress()).toEqual({ known: [], vocabKnown: [], bonus: 0, practice: { answered: 0, correct: 0 }, boxes: {}, romanPref: "reveal" });
   });
 
   it("round-trips saved progress", () => {
-    const p = { known: ["cmn:a"], vocabKnown: ["cmn:v-1", "jpn:v-2"], bonus: 5, practice: { answered: 4, correct: 3 }, boxes: { "cmn:a": 3 } };
+    const p = { known: ["cmn:a"], vocabKnown: ["cmn:v-1", "jpn:v-2"], bonus: 5, practice: { answered: 4, correct: 3 }, boxes: { "cmn:a": 3 }, romanPref: "always" as const };
     saveProgress(p);
     expect(loadProgress()).toEqual(p);
+  });
+
+  it("defaults an invalid or missing romanPref to 'reveal'", () => {
+    localStorage.setItem(KEY, JSON.stringify({ romanPref: "bogus" }));
+    expect(loadProgress().romanPref).toBe("reveal");
+    localStorage.setItem(KEY, JSON.stringify({ bonus: 1 }));
+    expect(loadProgress().romanPref).toBe("reveal");
+    localStorage.setItem(KEY, JSON.stringify({ romanPref: "off" }));
+    expect(loadProgress().romanPref).toBe("off");
   });
 
   it("falls back to empty on corrupt JSON", () => {
@@ -50,7 +59,7 @@ describe("store — progress persistence", () => {
   });
 
   it("clearProgress removes stored data", () => {
-    saveProgress({ known: ["cmn:a"], vocabKnown: [], bonus: 1, practice: { answered: 1, correct: 1 }, boxes: { "cmn:a": 2 } });
+    saveProgress({ known: ["cmn:a"], vocabKnown: [], bonus: 1, practice: { answered: 1, correct: 1 }, boxes: { "cmn:a": 2 }, romanPref: "off" });
     clearProgress();
     expect(localStorage.getItem(KEY)).toBeNull();
     expect(loadProgress().known).toEqual([]);

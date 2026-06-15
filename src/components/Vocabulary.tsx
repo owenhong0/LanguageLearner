@@ -1,12 +1,15 @@
 import { useMemo, useState } from "react";
-import type { LangContent, VocabItem } from "../types";
+import type { LangContent, RomanPref, VocabItem } from "../types";
 import { VOCAB_DECKS } from "../content";
 import { VocabCard, type VocabStatus } from "./VocabCard";
+import { RomanToggle } from "./RomanToggle";
 
 interface Props {
   c: LangContent;
   known: Set<string>;
   onKnow: (key: string) => void;
+  romanPref: RomanPref;
+  onRomanPref: (pref: RomanPref) => void;
 }
 
 type StatusFilter = "all" | "new" | "learning" | "known";
@@ -18,7 +21,7 @@ function statusOf(item: VocabItem, key: string, known: Set<string>): VocabStatus
   return "learning";
 }
 
-export function Vocabulary({ c, known, onKnow }: Props) {
+export function Vocabulary({ c, known, onKnow, romanPref, onRomanPref }: Props) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [deck, setDeck] = useState<string>("all");
@@ -86,6 +89,8 @@ export function Vocabulary({ c, known, onKnow }: Props) {
         <span className="count">{c.romanSystem}</span>
       </h2>
 
+      <RomanToggle system={c.romanSystem} value={romanPref} onChange={onRomanPref} />
+
       {/* summary */}
       <div className="vocab-summary panel">
         <div className="vsum-stats">
@@ -146,6 +151,7 @@ export function Vocabulary({ c, known, onKnow }: Props) {
               lang={c}
               status={statusOf(item, key(item), known)}
               onKnow={() => onKnow(key(item))}
+              showRoman={romanPref !== "off"}
             />
           ))}
         </div>

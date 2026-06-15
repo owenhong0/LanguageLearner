@@ -65,12 +65,23 @@ export interface ReadingLine {
   translation: string;
 }
 
+/** Optional comprehension check shown under a passage. */
+export interface PassageQuestion {
+  ask: string; // the question, in English
+  opts: string[]; // answer choices
+  a: number; // index of the correct choice in `opts`
+}
+
 export interface Passage {
   id: string;
   kind: string; // "News" | "Story"
   title: ReadingLine;
   lines: ReadingLine[];
+  question?: PassageQuestion;
 }
+
+/** How romanization (pinyin / jyutping / rōmaji) is displayed, app-wide (T6). */
+export type RomanPref = "reveal" | "always" | "off";
 
 export interface QuizOption {
   glyph: string;
