@@ -134,6 +134,19 @@ a { color: inherit; }
 .known-tag svg { width: 14px; height: 14px; }
 .flip:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; border-radius: 14px; }
 
+/* Leitner spaced-repetition footer on the card back (T3) */
+.sr { display: flex; flex-direction: column; gap: 10px; }
+.box-pips { display: flex; gap: 5px; }
+.box-pips i { flex: 1; height: 5px; border-radius: 999px; background: var(--line); transition: background .3s ease; }
+.box-pips i.on { background: var(--jade); }
+.sr .row { margin-top: 0; gap: 8px; align-items: center; }
+.sr .row .btn { flex: 1; min-width: 0; padding-left: 6px; padding-right: 6px; }
+.sr-hear { flex: none; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--card); color: var(--seal); display: grid; place-items: center; cursor: pointer; }
+.sr-hear svg { width: 14px; height: 14px; }
+.sr-hear:hover { border-color: var(--seal); }
+.sr-hear:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+
 .review-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
 .due-badge { font-family: var(--mono); font-size: 12px; color: var(--seal); border: 1px solid var(--line);
   border-radius: 999px; padding: 4px 11px; background: var(--card); }
