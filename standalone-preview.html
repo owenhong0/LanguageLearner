@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>墨 Moshui — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#F4F2EC; --card:#FBFAF6; --ink:#23201C; --soft:#6B645A;
+    --line:#DCD7CB; --seal:#C0392B; --jade:#2E7D6B; --indigo:#2B4865;
+    --display:'Schibsted Grotesk', system-ui, -apple-system, sans-serif;
+    --body:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono:'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --cjk:"Songti SC","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK SC","Noto Serif JP",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--body);
+    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  #root{min-height:100%}
+  a{color:inherit}
+
+  /* ---------- top bar ---------- */
+  .topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:22px;
+    padding:14px 24px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;
+    letter-spacing:-0.02em;font-size:20px}
+  .seal-mark{width:34px;height:34px;background:var(--seal);color:#fff;display:grid;place-items:center;
+    border-radius:6px;transform:rotate(-4deg);font-family:var(--cjk);font-weight:700;font-size:21px;
+    box-shadow:0 2px 0 rgba(0,0,0,.08)}
+  .brand .sub{font-family:var(--mono);font-size:11px;color:var(--soft);font-weight:400;
+    letter-spacing:.04em;margin-left:2px}
+  .pills{display:flex;gap:6px;margin-left:4px}
+  .pill{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);border-radius:999px;padding:6px 13px 6px 9px;cursor:pointer;font-family:var(--body);
+    font-weight:600;font-size:13.5px;transition:transform .15s ease,background .15s ease,border-color .15s}
+  .pill .badge{font-family:var(--cjk);font-size:17px;line-height:1}
+  .pill:hover{transform:translateY(-1px)}
+  .pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .pill:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .tabs{display:flex;gap:2px;margin-left:auto;overflow-x:auto;max-width:100%}
+  .tab{border:0;background:transparent;color:var(--soft);font-family:var(--display);font-weight:600;
+    font-size:14px;padding:9px 13px;border-radius:8px;cursor:pointer;white-space:nowrap;
+    transition:color .15s,background .15s}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--ink);background:var(--card);box-shadow:inset 0 -2px 0 var(--seal)}
+  .tab:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 24px 80px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+  .section-title{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;font-size:23px;
+    margin:34px 0 14px;display:flex;align-items:center;gap:12px}
+  .section-title .count{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--soft);
+    border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px}
+  .anim-in{animation:fade .4s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:6px}
+  .greet{padding:26px 28px}
+  .greet h1{font-family:var(--display);font-weight:800;letter-spacing:-0.03em;font-size:40px;line-height:1.05}
+  .greet .note{color:var(--soft);margin-top:8px;max-width:46ch}
+  .greet-glyph{display:flex;align-items:flex-end;gap:18px;margin-top:22px}
+  .greet-glyph .g{font-family:var(--cjk);font-size:64px;line-height:.9;color:var(--ink)}
+  .greet-glyph .meta .roman{font-family:var(--mono);color:var(--seal);font-size:15px}
+  .greet-glyph .meta .gloss{color:var(--soft);font-size:14px}
+
+  .goal{padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+  .ring{position:relative;width:150px;height:150px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .ring .center .big{font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:-0.02em;line-height:1}
+  .ring .center .lbl{font-family:var(--mono);font-size:11px;color:var(--soft);letter-spacing:.08em;margin-top:3px}
+  .goal-row{display:flex;gap:22px;margin-top:8px}
+  .stat{text-align:center}
+  .stat .n{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-0.02em}
+  .stat .k{font-family:var(--mono);font-size:11px;color:var(--soft);letter-spacing:.05em;text-transform:uppercase}
+
+  .btn{font-family:var(--display);font-weight:700;font-size:14.5px;color:#fff;background:var(--seal);
+    border:0;border-radius:10px;padding:11px 18px;cursor:pointer;transition:transform .12s ease,filter .15s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+  .btn:active{transform:translateY(0)}
+  .btn:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{background:var(--paper)}
+  .btn.small{padding:8px 13px;font-size:13px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn:disabled:hover{transform:none;filter:none}
+
+  /* ---------- 田字格 ---------- */
+  .tian{position:relative;background:var(--card);border:2px solid var(--ink);display:grid;
+    place-items:center;overflow:hidden;border-radius:6px}
+  .tian::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px dashed rgba(35,32,28,.22)}
+  .tian::after{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed rgba(35,32,28,.22)}
+  .tian .ch{font-family:var(--cjk);color:var(--ink);position:relative;z-index:1;line-height:1}
+
+  /* character of the day */
+  .cod{display:grid;grid-template-columns:auto 1fr;gap:26px;padding:24px;align-items:center}
+  .cod .tian{width:188px;height:188px}
+  .cod .tian .ch{font-size:120px}
+  .cod .roman{font-family:var(--mono);color:var(--seal);font-size:17px}
+  .cod h3{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:-0.02em;margin:6px 0 2px}
+  .cod .example{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:flex;
+    align-items:baseline;gap:12px;flex-wrap:wrap}
+  .cod .example .ex-ch{font-family:var(--cjk);font-size:30px}
+  .cod .example .ex-rom{font-family:var(--mono);color:var(--seal);font-size:14px}
+  .cod .example .ex-gloss{color:var(--soft)}
+  .cod .actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+
+  .play{display:inline-flex;align-items:center;gap:7px}
+  .play svg{width:15px;height:15px}
+
+  /* ---------- review flip cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:16px}
+  .flip{perspective:1100px;height:248px;cursor:pointer}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.6,.05,.2,1);
+    transform-style:preserve-3d}
+  .flip.is-flipped .flip-inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);
+    border-radius:14px;background:var(--card);padding:16px;display:flex;flex-direction:column}
+  .flip.known .face{border-color:var(--jade);box-shadow:inset 0 0 0 1px var(--jade)}
+  .face.front{align-items:center;justify-content:center;gap:12px;text-align:center}
+  .face.front .tian{width:120px;height:120px}
+  .face.front .tian .ch{font-size:74px}
+  .face.front .roman{font-family:var(--mono);color:var(--seal);font-size:14px}
+  .face.front .anchor{font-size:20px}
+  .face.back{transform:rotateY(180deg);justify-content:space-between}
+  .face.back .meaning{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-0.01em}
+  .face.back .ex{margin-top:8px;color:var(--soft);font-size:14px}
+  .face.back .ex .ex-ch{font-family:var(--cjk);font-size:18px;color:var(--ink)}
+  .face.back .ex .ex-rom{font-family:var(--mono);color:var(--seal);font-size:12.5px}
+  .face.back .row{display:flex;gap:8px;margin-top:12px}
+  .known-tag{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:5px;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--jade)}
+  .known-tag svg{width:14px;height:14px}
+  .flip:focus-visible{outline:2px solid var(--indigo);outline-offset:3px;border-radius:14px}
+
+  .review-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+  .due-badge{font-family:var(--mono);font-size:12px;color:var(--seal);border:1px solid var(--line);
+    border-radius:999px;padding:4px 11px;background:var(--card)}
+  .mastery{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .mbar{width:160px;height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+  .mbar i{display:block;height:100%;background:var(--jade);transition:width .45s ease}
+  .mastery .seal-reward{width:46px;height:46px;background:var(--seal);color:#fff;display:grid;
+    place-items:center;border-radius:8px;font-family:var(--cjk);font-weight:700;font-size:26px;
+    transform:rotate(-5deg) scale(0);transition:transform .45s cubic-bezier(.2,1.3,.5,1);
+    box-shadow:0 3px 0 rgba(0,0,0,.1)}
+  .mastery .seal-reward.show{transform:rotate(-5deg) scale(1)}
+
+  /* ---------- tone trainer ---------- */
+  .tone-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:14px}
+  .tone-card{padding:15px;cursor:pointer;border:1px solid var(--line);border-radius:14px;
+    background:var(--card);transition:transform .15s ease,border-color .15s}
+  .tone-card:hover{transform:translateY(-2px);border-color:var(--soft)}
+  .tone-card:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .tone-card .glyph{font-family:var(--cjk);font-size:34px;line-height:1}
+  .tone-card .roman{font-family:var(--mono);color:var(--seal);font-size:13px;margin-top:2px}
+  .tone-card .gloss{color:var(--soft);font-size:12.5px}
+  .tone-card svg.contour{display:block;width:100%;height:46px;margin:8px 0 6px}
+  .tone-card .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+
+  .footnote{margin-top:40px;color:var(--soft);font-size:13px;border-top:1px dashed var(--line);
+    padding-top:16px;max-width:70ch}
+  .footnote code{font-family:var(--mono);font-size:12px;color:var(--ink)}
+
+  /* ---------- vocabulary ---------- */
+  .vocab-summary{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:6px}
+  .vsum-stats{display:flex;gap:26px}
+  .vsum-bar{display:flex;align-items:center;gap:12px;flex:1;min-width:220px;justify-content:flex-end}
+  .vsum-bar .mbar{flex:1;max-width:260px}
+  .vsum-pct{font-family:var(--mono);font-size:12px;color:var(--soft);white-space:nowrap}
+  .vocab-controls{display:flex;align-items:center;gap:14px;margin:16px 0 10px;flex-wrap:wrap}
+  .vsearch{flex:1;min-width:220px;font-family:var(--body);font-size:14px;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  .vsearch::placeholder{color:var(--soft)}
+  .vsearch:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;border-color:var(--soft)}
+  .filter-pills{display:flex;gap:6px}
+  .fpill{font-family:var(--mono);font-size:12px;letter-spacing:.03em;color:var(--soft);background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+  .fpill:hover{color:var(--ink)}
+  .fpill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .fpill:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .deck-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .chip{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);background:var(--card);
+    border:1px solid var(--line);border-radius:10px;padding:7px 14px;cursor:pointer;transition:transform .12s ease,border-color .15s,background .15s}
+  .chip:hover{transform:translateY(-1px);border-color:var(--soft)}
+  .chip.active{background:var(--seal);color:#fff;border-color:var(--seal)}
+  .chip:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px}
+  .vcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .vcard.status-known{border-color:var(--jade);box-shadow:inset 0 0 0 1px var(--jade)}
+  .vcard-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .status-pill{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);
+    display:inline-flex;align-items:center;gap:6px}
+  .status-pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--line);border:1px solid var(--soft)}
+  .status-pill.s-learning::before{background:var(--soft);border-color:var(--soft)}
+  .status-pill.s-known{color:var(--jade)}
+  .status-pill.s-known::before{background:var(--jade);border-color:var(--jade)}
+  .vdeck{font-family:var(--mono);font-size:10.5px;color:var(--soft)}
+  .vcard-main{display:flex;gap:14px;align-items:center}
+  .tian.sm{width:76px;height:76px;flex:none}
+  .tian.sm .ch{font-size:44px}
+  .vmeta{min-width:0}
+  .vmeta .roman{font-family:var(--mono);color:var(--seal);font-size:14px}
+  .vmeaning{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-0.01em;margin-top:2px}
+  .vex{color:var(--soft);font-size:13px;margin-top:4px}
+  .vex .ex-ch{font-family:var(--cjk);font-size:15px;color:var(--ink)}
+  .vex .ex-rom{font-family:var(--mono);color:var(--seal);font-size:11.5px}
+  .reveal{margin-top:4px;font-family:var(--mono);font-size:12px;color:var(--soft);background:none;border:0;
+    border-bottom:1px dashed var(--line);padding:2px 0;cursor:pointer}
+  .reveal:hover{color:var(--ink)}
+  .vcard-actions{display:flex;gap:8px}
+  .with-check{display:inline-flex;align-items:center;gap:5px}
+  .with-check svg{width:14px;height:14px}
+  .empty{color:var(--soft);padding:28px 0;font-size:15px}
+  .add-word{padding:16px 20px;margin-top:18px}
+  .aw-label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+  .aw-row{display:flex;gap:10px;flex-wrap:wrap}
+  .aw-input{font-family:var(--body);font-size:14px;color:var(--ink);background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:9px 13px;flex:1;min-width:140px}
+  .aw-input:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+
+  /* ---------- converse ---------- */
+  .converse-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:6px 0 14px}
+  .scenario-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .mode-toggle{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
+  .seg{font-family:var(--display);font-weight:600;font-size:13px;color:var(--soft);background:none;border:0;
+    border-radius:8px;padding:7px 16px;cursor:pointer;transition:background .15s,color .15s}
+  .seg.active{background:var(--ink);color:var(--paper)}
+  .seg:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .chat{padding:18px;display:flex;flex-direction:column;gap:14px}
+  .chat-thread{display:flex;flex-direction:column;gap:16px;max-height:440px;overflow-y:auto;padding:6px 4px;scroll-behavior:smooth}
+  .chat-row{display:flex;flex-direction:column;max-width:78%}
+  .chat-row.tutor{align-self:flex-start;align-items:flex-start}
+  .chat-row.learner{align-self:flex-end;align-items:flex-end}
+  .bubble{position:relative;border-radius:14px;padding:13px 16px}
+  .bubble.tutor{background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:4px;padding-right:42px}
+  .bubble.learner{background:var(--indigo);color:#fff;border-bottom-right-radius:4px}
+  .b-glyph{font-family:var(--cjk);font-size:21px;line-height:1.45}
+  .b-reveal{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:2px}
+  .b-roman{font-family:var(--mono);color:var(--seal);font-size:13px}
+  .b-trans{color:var(--soft);font-size:13.5px}
+  .b-reveal-btn{margin-top:7px;font-family:var(--mono);font-size:11.5px;color:var(--soft);background:none;border:0;
+    border-bottom:1px dashed var(--line);padding:2px 0;cursor:pointer}
+  .b-reveal-btn:hover{color:var(--ink)}
+  .b-play{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);
+    background:var(--card);color:var(--seal);display:grid;place-items:center;cursor:pointer}
+  .b-play svg{width:13px;height:13px}
+  .b-play:hover{border-color:var(--seal)}
+  .b-play:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .feedback-note{margin-top:8px;border-left:3px solid var(--jade);background:color-mix(in srgb,var(--jade) 7%,var(--card));
+    color:var(--ink);font-size:13px;padding:8px 12px;border-radius:0 8px 8px 0;max-width:100%}
+  .suggestions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:14px}
+  .sugg{display:flex;flex-direction:column;align-items:flex-start;gap:1px;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:8px 12px;cursor:pointer;text-align:left;transition:transform .12s ease,border-color .15s}
+  .sugg:hover{transform:translateY(-1px);border-color:var(--soft)}
+  .sugg:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  .sugg-glyph{font-family:var(--cjk);font-size:16px;color:var(--ink)}
+  .sugg-rom{font-family:var(--mono);font-size:11px;color:var(--seal)}
+  .composer{display:flex;gap:10px;align-items:center}
+  .composer-input{flex:1;font-family:var(--body);font-size:15px;color:var(--ink);background:var(--paper);
+    border:1px solid var(--line);border-radius:12px;padding:12px 15px}
+  .composer-input::placeholder{color:var(--soft)}
+  .composer-input:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;border-color:var(--soft)}
+  .mic{width:44px;height:44px;flex:none;border-radius:12px;border:1px solid var(--seal);background:var(--card);
+    color:var(--seal);display:grid;place-items:center;cursor:pointer;transition:background .15s,color .15s}
+  .mic svg{width:19px;height:19px}
+  .mic.on{background:var(--seal);color:#fff;animation:micpulse 1.1s ease-in-out infinite}
+  .mic:disabled{opacity:.4;cursor:not-allowed;border-color:var(--line);color:var(--soft)}
+  .mic:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+  @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--seal) 45%,transparent)}
+    50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--seal) 0%,transparent)}}
+  .coming-soon{padding:28px}
+  .coming-soon p{color:var(--soft);max-width:60ch}
+
+  @media (max-width:760px){
+    .topbar-in{gap:14px}
+    .tabs{order:3;width:100%;margin-left:0}
+    .hero{grid-template-columns:1fr}
+    .cod{grid-template-columns:1fr;justify-items:center;text-align:center}
+    .cod .example{justify-content:center}
+    .greet h1{font-size:32px}
+    .vocab-summary{gap:14px}
+    .vsum-bar{justify-content:flex-start}
+    .vocab-controls{flex-direction:column;align-items:stretch}
+    .converse-bar{flex-direction:column;align-items:stretch}
+    .mode-toggle{align-self:flex-start}
+    .chat-row{max-width:90%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+    .flip-inner{transition:none !important}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="typescript,react">
+const { useState, useMemo, useCallback, useRef, useEffect } = React;
+
+/* ----------------------------- types ----------------------------- */
+type LangId = "yue" | "cmn" | "jpn";
+interface Example { glyph: string; roman: string; gloss: string }
+interface Card { id: string; glyph: string; roman: string; meaning: string; anchor: string; example: Example }
+interface Tone { label: string; glyph: string; roman: string; gloss: string; points: string }
+interface VocabItem { id: string; glyph: string; roman: string; meaning: string; deck: string; anchor: string; example: Example; srs: number }
+interface ChatLine { glyph: string; roman: string; translation: string; feedback?: string }
+interface Scenario { id: string; label: string; opener: ChatLine }
+interface ConverseSeed { scenarios: Scenario[]; suggestions: ChatLine[]; followups: ChatLine[] }
+interface LangContent {
+  id: LangId; pill: string; name: string; speechLang: string; romanSystem: string;
+  greeting: { glyph: string; roman: string; meaning: string };
+  hero: Card; review: Card[]; tone: { title: string; items: Tone[] };
+  vocabulary: VocabItem[]; converse: ConverseSeed;
+}
+type VocabStatus = "new" | "learning" | "known";
+
+/* --------------------------- speech util -------------------------- */
+function speak(text: string, lang: string) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang; u.rate = 0.82;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  } catch (_) { /* speech unsupported — silent, honest fallback */ }
+}
+
+/* ----------------------------- content ---------------------------- */
+const CONTENT: Record<LangId, LangContent> = {
+  cmn: {
+    id: "cmn", pill: "普", name: "Mandarin", speechLang: "zh-CN", romanSystem: "Pinyin",
+    greeting: { glyph: "早安", roman: "zǎo ān", meaning: "good morning" },
+    hero: { id: "cmn-tea", glyph: "茶", roman: "chá", meaning: "tea", anchor: "🍵",
+      example: { glyph: "喝茶", roman: "hē chá", gloss: "to drink tea" } },
+    review: [
+      { id: "ni-hao", glyph: "你好", roman: "nǐ hǎo", meaning: "hello", anchor: "👋",
+        example: { glyph: "你好吗", roman: "nǐ hǎo ma", gloss: "how are you?" } },
+      { id: "xiexie", glyph: "谢谢", roman: "xiè xie", meaning: "thank you", anchor: "🙏",
+        example: { glyph: "谢谢你", roman: "xiè xie nǐ", gloss: "thank you" } },
+      { id: "chifan", glyph: "吃饭", roman: "chī fàn", meaning: "to eat a meal", anchor: "🍚",
+        example: { glyph: "吃饭了吗", roman: "chī fàn le ma", gloss: "have you eaten?" } },
+      { id: "shui", glyph: "水", roman: "shuǐ", meaning: "water", anchor: "💧",
+        example: { glyph: "一杯水", roman: "yì bēi shuǐ", gloss: "a glass of water" } },
+    ],
+    tone: { title: "Four tones · mā má mǎ mà", items: [
+      { label: "Tone 1 · high level", glyph: "妈", roman: "mā", gloss: "mother", points: "6,9 58,9" },
+      { label: "Tone 2 · rising", glyph: "麻", roman: "má", gloss: "hemp", points: "8,31 56,9" },
+      { label: "Tone 3 · dipping", glyph: "马", roman: "mǎ", gloss: "horse", points: "8,15 26,33 56,12" },
+      { label: "Tone 4 · falling", glyph: "骂", roman: "mà", gloss: "to scold", points: "8,9 56,31" },
+    ] },
+    vocabulary: [
+      { id: "v-nihao", glyph: "你好", roman: "nǐ hǎo", meaning: "hello", deck: "Greetings", anchor: "👋", srs: 5, example: { glyph: "你好吗", roman: "nǐ hǎo ma", gloss: "how are you?" } },
+      { id: "v-xiexie", glyph: "谢谢", roman: "xiè xie", meaning: "thank you", deck: "Greetings", anchor: "🙏", srs: 4, example: { glyph: "谢谢你", roman: "xiè xie nǐ", gloss: "thank you" } },
+      { id: "v-zaijian", glyph: "再见", roman: "zài jiàn", meaning: "goodbye", deck: "Greetings", anchor: "👋", srs: 2, example: { glyph: "明天见", roman: "míng tiān jiàn", gloss: "see you tomorrow" } },
+      { id: "v-duibuqi", glyph: "对不起", roman: "duì bu qǐ", meaning: "sorry", deck: "Greetings", anchor: "🙇", srs: 0, example: { glyph: "对不起，我来晚了", roman: "duì bu qǐ, wǒ lái wǎn le", gloss: "sorry I'm late" } },
+      { id: "v-cha", glyph: "茶", roman: "chá", meaning: "tea", deck: "Food & drink", anchor: "🍵", srs: 3, example: { glyph: "喝茶", roman: "hē chá", gloss: "to drink tea" } },
+      { id: "v-shui", glyph: "水", roman: "shuǐ", meaning: "water", deck: "Food & drink", anchor: "💧", srs: 4, example: { glyph: "一杯水", roman: "yì bēi shuǐ", gloss: "a glass of water" } },
+      { id: "v-mifan", glyph: "米饭", roman: "mǐ fàn", meaning: "cooked rice", deck: "Food & drink", anchor: "🍚", srs: 1, example: { glyph: "来一碗米饭", roman: "lái yì wǎn mǐ fàn", gloss: "a bowl of rice, please" } },
+      { id: "v-pijiu", glyph: "啤酒", roman: "pí jiǔ", meaning: "beer", deck: "Food & drink", anchor: "🍺", srs: 0, example: { glyph: "两瓶啤酒", roman: "liǎng píng pí jiǔ", gloss: "two bottles of beer" } },
+      { id: "v-pengyou", glyph: "朋友", roman: "péng you", meaning: "friend", deck: "Daily life", anchor: "🧑‍🤝‍🧑", srs: 2, example: { glyph: "好朋友", roman: "hǎo péng you", gloss: "good friend" } },
+      { id: "v-gongzuo", glyph: "工作", roman: "gōng zuò", meaning: "work / job", deck: "Daily life", anchor: "💼", srs: 1, example: { glyph: "去工作", roman: "qù gōng zuò", gloss: "to go to work" } },
+      { id: "v-shijian", glyph: "时间", roman: "shí jiān", meaning: "time", deck: "Daily life", anchor: "🕒", srs: 0, example: { glyph: "没有时间", roman: "méi yǒu shí jiān", gloss: "no time" } },
+    ],
+    converse: {
+      scenarios: [
+        { id: "tea", label: "Order tea", opener: { glyph: "欢迎！你想喝什么？", roman: "huān yíng! nǐ xiǎng hē shén me?", translation: "Welcome! What would you like to drink?" } },
+        { id: "neighbor", label: "Greet a neighbor", opener: { glyph: "早上好！最近怎么样？", roman: "zǎo shang hǎo! zuì jìn zěn me yàng?", translation: "Good morning! How have you been?" } },
+      ],
+      suggestions: [
+        { glyph: "我想喝茶。", roman: "wǒ xiǎng hē chá.", translation: "I'd like tea." },
+        { glyph: "多少钱？", roman: "duō shǎo qián?", translation: "How much is it?" },
+        { glyph: "谢谢！", roman: "xiè xie!", translation: "Thank you!" },
+      ],
+      followups: [
+        { glyph: "好的，热的还是冰的？", roman: "hǎo de, rè de hái shì bīng de?", translation: "Sure — hot or iced?" },
+        { glyph: "没问题。还要别的吗？", roman: "méi wèn tí. hái yào bié de ma?", translation: "No problem. Anything else?", feedback: "Nicely said. Add 请 (qǐng, “please”) before a request to sound more polite." },
+        { glyph: "一共二十块，谢谢！", roman: "yí gòng èr shí kuài, xiè xie!", translation: "That's 20 yuan in total, thanks!" },
+      ],
+    },
+  },
+  yue: {
+    id: "yue", pill: "粵", name: "Cantonese", speechLang: "zh-HK", romanSystem: "Jyutping",
+    greeting: { glyph: "早晨", roman: "zou2 san4", meaning: "good morning" },
+    hero: { id: "yue-tea", glyph: "茶", roman: "caa4", meaning: "tea", anchor: "🍵",
+      example: { glyph: "飲茶", roman: "jam2 caa4", gloss: "to go for dim sum" } },
+    review: [
+      { id: "nei-hou", glyph: "你好", roman: "nei5 hou2", meaning: "hello", anchor: "👋",
+        example: { glyph: "你好嗎", roman: "nei5 hou2 maa3", gloss: "how are you?" } },
+      { id: "doze", glyph: "多謝", roman: "do1 ze6", meaning: "thank you (for a gift)", anchor: "🙏",
+        example: { glyph: "唔該", roman: "m4 goi1", gloss: "thanks / excuse me" } },
+      { id: "sikfaan", glyph: "食飯", roman: "sik6 faan6", meaning: "to eat a meal", anchor: "🍚",
+        example: { glyph: "食咗飯未", roman: "sik6 zo2 faan6 mei6", gloss: "have you eaten?" } },
+      { id: "seoi", glyph: "水", roman: "seoi2", meaning: "water", anchor: "💧",
+        example: { glyph: "一杯水", roman: "jat1 bui1 seoi2", gloss: "a glass of water" } },
+    ],
+    tone: { title: "Six tones · si1–si6", items: [
+      { label: "Tone 1 · high level", glyph: "詩", roman: "si1", gloss: "poem", points: "6,9 58,9" },
+      { label: "Tone 2 · high rising", glyph: "史", roman: "si2", gloss: "history", points: "8,27 56,9" },
+      { label: "Tone 3 · mid level", glyph: "試", roman: "si3", gloss: "to try", points: "6,20 58,20" },
+      { label: "Tone 4 · low falling", glyph: "時", roman: "si4", gloss: "time", points: "8,27 56,34" },
+      { label: "Tone 5 · low rising", glyph: "市", roman: "si5", gloss: "market", points: "8,33 56,21" },
+      { label: "Tone 6 · low level", glyph: "事", roman: "si6", gloss: "matter", points: "6,31 58,31" },
+    ] },
+    vocabulary: [
+      { id: "v-neihou", glyph: "你好", roman: "nei5 hou2", meaning: "hello", deck: "Greetings", anchor: "👋", srs: 5, example: { glyph: "你好嗎", roman: "nei5 hou2 maa3", gloss: "how are you?" } },
+      { id: "v-zousan", glyph: "早晨", roman: "zou2 san4", meaning: "good morning", deck: "Greetings", anchor: "🌅", srs: 3, example: { glyph: "早晨啊", roman: "zou2 san4 aa3", gloss: "morning!" } },
+      { id: "v-baaibaai", glyph: "拜拜", roman: "baai1 baai3", meaning: "bye-bye", deck: "Greetings", anchor: "👋", srs: 2, example: { glyph: "聽日見", roman: "ting1 jat6 gin3", gloss: "see you tomorrow" } },
+      { id: "v-mgoi", glyph: "唔該", roman: "m4 goi1", meaning: "thanks / excuse me", deck: "Greetings", anchor: "🙏", srs: 1, example: { glyph: "唔該晒", roman: "m4 goi1 saai3", gloss: "thanks a lot" } },
+      { id: "v-caa", glyph: "茶", roman: "caa4", meaning: "tea", deck: "Food & drink", anchor: "🍵", srs: 4, example: { glyph: "飲茶", roman: "jam2 caa4", gloss: "to drink tea / yum cha" } },
+      { id: "v-seoi", glyph: "水", roman: "seoi2", meaning: "water", deck: "Food & drink", anchor: "💧", srs: 3, example: { glyph: "一杯水", roman: "jat1 bui1 seoi2", gloss: "a glass of water" } },
+      { id: "v-faan", glyph: "飯", roman: "faan6", meaning: "rice / meal", deck: "Food & drink", anchor: "🍚", srs: 0, example: { glyph: "食飯", roman: "sik6 faan6", gloss: "to eat" } },
+      { id: "v-bezau", glyph: "啤酒", roman: "be1 zau2", meaning: "beer", deck: "Food & drink", anchor: "🍺", srs: 0, example: { glyph: "凍啤", roman: "dung3 be1", gloss: "cold beer" } },
+      { id: "v-pangjau", glyph: "朋友", roman: "pang4 jau5", meaning: "friend", deck: "Daily life", anchor: "🧑‍🤝‍🧑", srs: 2, example: { glyph: "好朋友", roman: "hou2 pang4 jau5", gloss: "good friend" } },
+      { id: "v-faangung", glyph: "返工", roman: "faan1 gung1", meaning: "to go to work", deck: "Daily life", anchor: "💼", srs: 1, example: { glyph: "返工喇", roman: "faan1 gung1 laa3", gloss: "off to work" } },
+      { id: "v-sigaan", glyph: "時間", roman: "si4 gaan3", meaning: "time", deck: "Daily life", anchor: "🕒", srs: 0, example: { glyph: "冇時間", roman: "mou5 si4 gaan3", gloss: "no time" } },
+    ],
+    converse: {
+      scenarios: [
+        { id: "tea", label: "Order tea", opener: { glyph: "歡迎！想飲啲咩呀？", roman: "fun1 jing4! soeng2 jam2 di1 me1 aa3?", translation: "Welcome! What would you like to drink?" } },
+        { id: "neighbor", label: "Greet a neighbor", opener: { glyph: "早晨！最近點呀？", roman: "zou2 san4! zeoi3 gan6 dim2 aa3?", translation: "Morning! How have you been lately?" } },
+      ],
+      suggestions: [
+        { glyph: "我想飲茶。", roman: "ngo5 soeng2 jam2 caa4.", translation: "I'd like tea." },
+        { glyph: "幾多錢？", roman: "gei2 do1 cin2?", translation: "How much is it?" },
+        { glyph: "唔該！", roman: "m4 goi1!", translation: "Thanks!" },
+      ],
+      followups: [
+        { glyph: "好呀,熱定凍？", roman: "hou2 aa3, jit6 ding6 dung3?", translation: "Sure — hot or iced?" },
+        { glyph: "冇問題。仲要啲咩？", roman: "mou5 man6 tai4. zung6 jiu3 di1 me1?", translation: "No problem. Anything else?", feedback: "Good! In a shop you can add 唔該 (m4 goi1) at the end to be polite." },
+        { glyph: "一共二十蚊,唔該！", roman: "jat1 gung6 ji6 sap6 man1, m4 goi1!", translation: "Twenty dollars in total, thanks!" },
+      ],
+    },
+  },
+  jpn: {
+    id: "jpn", pill: "日", name: "Japanese", speechLang: "ja-JP", romanSystem: "Rōmaji",
+    greeting: { glyph: "おはよう", roman: "ohayō", meaning: "good morning" },
+    hero: { id: "jpn-tea", glyph: "茶", roman: "cha", meaning: "tea", anchor: "🍵",
+      example: { glyph: "お茶", roman: "o-cha", gloss: "(green) tea" } },
+    review: [
+      { id: "konnichiwa", glyph: "こんにちは", roman: "konnichiwa", meaning: "hello / good day", anchor: "👋",
+        example: { glyph: "こんばんは", roman: "konbanwa", gloss: "good evening" } },
+      { id: "arigatou", glyph: "ありがとう", roman: "arigatō", meaning: "thank you", anchor: "🙏",
+        example: { glyph: "どうも", roman: "dōmo", gloss: "thanks" } },
+      { id: "taberu", glyph: "食べる", roman: "taberu", meaning: "to eat", anchor: "🍚",
+        example: { glyph: "ご飯を食べる", roman: "gohan o taberu", gloss: "to eat a meal" } },
+      { id: "mizu", glyph: "水", roman: "mizu", meaning: "water", anchor: "💧",
+        example: { glyph: "お水", roman: "o-mizu", gloss: "water (polite)" } },
+    ],
+    tone: { title: "Pitch accent · same kana, different pitch", items: [
+      { label: "Atamadaka · H→L", glyph: "箸", roman: "hashi", gloss: "chopsticks", points: "8,9 30,9 30,31 56,31" },
+      { label: "Heiban · L→H", glyph: "橋", roman: "hashi", gloss: "bridge", points: "8,31 30,11 56,11" },
+      { label: "Atamadaka · H→L", glyph: "雨", roman: "ame", gloss: "rain", points: "8,9 30,9 30,31 56,31" },
+      { label: "Heiban · L→H", glyph: "飴", roman: "ame", gloss: "candy", points: "8,31 30,11 56,11" },
+    ] },
+    vocabulary: [
+      { id: "v-konnichiwa", glyph: "こんにちは", roman: "konnichiwa", meaning: "hello", deck: "Greetings", anchor: "👋", srs: 5, example: { glyph: "こんばんは", roman: "konbanwa", gloss: "good evening" } },
+      { id: "v-ohayou", glyph: "おはよう", roman: "ohayō", meaning: "good morning", deck: "Greetings", anchor: "🌅", srs: 3, example: { glyph: "おはようございます", roman: "ohayō gozaimasu", gloss: "good morning (polite)" } },
+      { id: "v-sayounara", glyph: "さようなら", roman: "sayōnara", meaning: "goodbye", deck: "Greetings", anchor: "👋", srs: 1, example: { glyph: "またね", roman: "mata ne", gloss: "see you" } },
+      { id: "v-arigatou", glyph: "ありがとう", roman: "arigatō", meaning: "thank you", deck: "Greetings", anchor: "🙏", srs: 4, example: { glyph: "どうも", roman: "dōmo", gloss: "thanks" } },
+      { id: "v-ocha", glyph: "お茶", roman: "o-cha", meaning: "tea", deck: "Food & drink", anchor: "🍵", srs: 3, example: { glyph: "お茶をどうぞ", roman: "o-cha o dōzo", gloss: "have some tea" } },
+      { id: "v-mizu", glyph: "水", roman: "mizu", meaning: "water", deck: "Food & drink", anchor: "💧", srs: 4, example: { glyph: "お水ください", roman: "o-mizu kudasai", gloss: "water, please" } },
+      { id: "v-gohan", glyph: "ご飯", roman: "gohan", meaning: "rice / meal", deck: "Food & drink", anchor: "🍚", srs: 1, example: { glyph: "ご飯を食べる", roman: "gohan o taberu", gloss: "to eat a meal" } },
+      { id: "v-biiru", glyph: "ビール", roman: "bīru", meaning: "beer", deck: "Food & drink", anchor: "🍺", srs: 0, example: { glyph: "生ビール", roman: "nama bīru", gloss: "draft beer" } },
+      { id: "v-tomodachi", glyph: "友達", roman: "tomodachi", meaning: "friend", deck: "Daily life", anchor: "🧑‍🤝‍🧑", srs: 2, example: { glyph: "友達と会う", roman: "tomodachi to au", gloss: "to meet a friend" } },
+      { id: "v-shigoto", glyph: "仕事", roman: "shigoto", meaning: "work / job", deck: "Daily life", anchor: "💼", srs: 1, example: { glyph: "仕事に行く", roman: "shigoto ni iku", gloss: "to go to work" } },
+      { id: "v-jikan", glyph: "時間", roman: "jikan", meaning: "time", deck: "Daily life", anchor: "🕒", srs: 0, example: { glyph: "時間がない", roman: "jikan ga nai", gloss: "no time" } },
+    ],
+    converse: {
+      scenarios: [
+        { id: "tea", label: "Order tea", opener: { glyph: "いらっしゃいませ！お飲み物は？", roman: "irasshaimase! o-nomimono wa?", translation: "Welcome! What would you like to drink?" } },
+        { id: "neighbor", label: "Greet a neighbor", opener: { glyph: "おはようございます！お元気ですか？", roman: "ohayō gozaimasu! o-genki desu ka?", translation: "Good morning! How are you?" } },
+      ],
+      suggestions: [
+        { glyph: "お茶をください。", roman: "o-cha o kudasai.", translation: "Tea, please." },
+        { glyph: "いくらですか？", roman: "ikura desu ka?", translation: "How much is it?" },
+        { glyph: "ありがとう！", roman: "arigatō!", translation: "Thank you!" },
+      ],
+      followups: [
+        { glyph: "はい、温かいのと冷たいの、どちらですか？", roman: "hai, atatakai no to tsumetai no, dochira desu ka?", translation: "Sure — hot or cold?" },
+        { glyph: "かしこまりました。他には？", roman: "kashikomarimashita. hoka ni wa?", translation: "Certainly. Anything else?", feedback: "Great. Ending with です/ます keeps it polite — you did that well." },
+        { glyph: "全部で五百円です。ありがとうございます！", roman: "zenbu de gohyaku-en desu. arigatō gozaimasu!", translation: "That's 500 yen in total. Thank you!" },
+      ],
+    },
+  },
+};
+
+const LANG_ORDER: LangId[] = ["yue", "cmn", "jpn"];
+const TABS = ["Home", "Converse", "Vocabulary", "Reading", "Practice", "Progress"];
+const VOCAB_DECKS = ["Greetings", "Food & drink", "Daily life"];
+const GOAL_TARGET = 15;
+
+/* --------------------------- icons (mono SVG) --------------------- */
+function PlayIcon() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 5l11 7-11 7V5z" /></svg>);
+}
+function CheckIcon() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" /></svg>);
+}
+function MicIcon() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>);
+}
+
+/* ----------------------------- top bar ---------------------------- */
+function TopBar({ lang, onLang, tab, onTab }:{ lang: LangId; onLang: (l: LangId) => void; tab: string; onTab: (t: string) => void; }) {
+  return (
+    <header className="topbar">
+      <div className="topbar-in">
+        <div className="brand">
+          <span className="seal-mark" aria-hidden="true">墨</span>
+          <span>Moshui<span className="sub"> /mò-shuǐ/ ink</span></span>
+        </div>
+        <div className="pills" role="group" aria-label="Choose language">
+          {LANG_ORDER.map((id) => {
+            const c = CONTENT[id]; const active = id === lang;
+            return (
+              <button key={id} className={"pill" + (active ? " active" : "")} aria-pressed={active} onClick={() => onLang(id)}>
+                <span className="badge">{c.pill}</span>{c.name}
+              </button>
+            );
+          })}
+        </div>
+        <nav className="tabs" aria-label="Sections">
+          {TABS.map((t) => (
+            <button key={t} className={"tab" + (t === tab ? " active" : "")} aria-current={t === tab ? "page" : undefined} onClick={() => onTab(t)}>{t}</button>
+          ))}
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* ----------------------------- goal ring -------------------------- */
+function GoalRing({ done, target }:{ done: number; target: number }) {
+  const r = 64, c = 2 * Math.PI * r;
+  const pct = Math.min(1, done / target);
+  const complete = done >= target;
+  return (
+    <div className="ring" role="img" aria-label={done + " of " + target + " minutes of today's goal done"}>
+      <svg width="150" height="150" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r={r} fill="none" stroke="var(--line)" strokeWidth="11" />
+        <circle cx="75" cy="75" r={r} fill="none" stroke="var(--jade)" strokeWidth="11" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - pct)} />
+      </svg>
+      <div className="center">
+        <div>
+          <div className="big" style={{ color: complete ? "var(--jade)" : "var(--ink)" }}>{complete ? "Done" : done + "/" + target}</div>
+          <div className="lbl">{complete ? "goal complete" : "minutes today"}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------- hero ----------------------------- */
+function Hero({ c, done, onPractice }:{ c: LangContent; done: number; onPractice: () => void }) {
+  return (
+    <div className="hero">
+      <div className="panel greet anim-in">
+        <div className="eyebrow">Today · learning {c.name}</div>
+        <h1>Welcome back.</h1>
+        <p className="note">A little every day. Tap any character to hear it, flip a card to test yourself, and trace the strokes inside the 田字格.</p>
+        <div className="greet-glyph">
+          <button className="g" onClick={() => speak(c.greeting.glyph, c.speechLang)} style={{ background: "none", border: 0, cursor: "pointer" }} aria-label={"Play " + c.greeting.glyph}>{c.greeting.glyph}</button>
+          <div className="meta">
+            <div className="roman">{c.greeting.roman}</div>
+            <div className="gloss">“{c.greeting.meaning}”</div>
+          </div>
+        </div>
+      </div>
+      <div className="panel goal anim-in">
+        <GoalRing done={done} target={GOAL_TARGET} />
+        <div className="goal-row">
+          <div className="stat"><div className="n">12</div><div className="k">day streak</div></div>
+          <div className="stat"><div className="n">3</div><div className="k">decks sealed</div></div>
+        </div>
+        <button className="btn small" style={{ marginTop: 12 }} onClick={onPractice}>+ Practice 5 min</button>
+      </div>
+    </div>
+  );
+}
+
+/* ----------------------- character of the day --------------------- */
+function CharacterOfDay({ c }:{ c: LangContent }) {
+  const h = c.hero;
+  return (
+    <div className="panel cod anim-in">
+      <div className="tian"><span className="ch">{h.glyph}</span></div>
+      <div>
+        <div className="roman">{h.roman} · {c.romanSystem}</div>
+        <h3>{h.meaning}</h3>
+        <div className="example">
+          <span className="ex-ch">{h.example.glyph}</span>
+          <span className="ex-rom">{h.example.roman}</span>
+          <span className="ex-gloss">“{h.example.gloss}”</span>
+        </div>
+        <div className="actions">
+          <button className="btn play" onClick={() => speak(h.glyph, c.speechLang)}><PlayIcon /> Hear it</button>
+          <button className="btn ghost" onClick={() => speak(h.example.glyph, c.speechLang)}>Play the phrase</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------- flip card ---------------------------- */
+function FlipCard({ card, lang, known, onKnow }:{ card: Card; lang: LangContent; known: boolean; onKnow: () => void; }) {
+  const [flipped, setFlipped] = useState(false);
+  const toggle = useCallback(() => setFlipped((f) => !f), []);
+  return (
+    <div className={"flip" + (flipped ? " is-flipped" : "") + (known ? " known" : "")} role="button" tabIndex={0} aria-pressed={flipped} aria-label={"Card: " + card.glyph + ". Press to flip."} onClick={toggle} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } }}>
+      <div className="flip-inner">
+        <div className="face front">
+          {known && <span className="known-tag"><CheckIcon /> known</span>}
+          <div className="tian"><span className="ch">{card.glyph}</span></div>
+          <div className="roman">{card.roman}</div>
+          <div className="anchor" aria-hidden="true">{card.anchor}</div>
+        </div>
+        <div className="face back">
+          <div>
+            <div className="meaning">{card.meaning}</div>
+            <div className="ex">
+              <span className="ex-ch">{card.example.glyph}</span>{" "}
+              <span className="ex-rom">{card.example.roman}</span><br />
+              “{card.example.gloss}”
+            </div>
+          </div>
+          <div className="row">
+            <button className="btn small play" onClick={(e) => { e.stopPropagation(); speak(card.glyph, lang.speechLang); }}><PlayIcon /> Hear</button>
+            <button className="btn small ghost" onClick={(e) => { e.stopPropagation(); onKnow(); }}>{known ? "Reviewed ✓" : "I know this"}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------- review deck --------------------------- */
+function ReviewDeck({ c, knownSet, onKnow }:{ c: LangContent; knownSet: Set<string>; onKnow: (id: string) => void; }) {
+  const total = c.review.length;
+  const knownCount = c.review.filter((card) => knownSet.has(c.id + ":" + card.id)).length;
+  const due = total - knownCount;
+  const pct = Math.round((knownCount / total) * 100);
+  const cleared = due === 0;
+  return (
+    <>
+      <h2 className="section-title">Review queue<span className="count">{c.romanSystem}</span></h2>
+      <div className="review-head">
+        <span className="due-badge">{cleared ? "all caught up" : due + " due today"}</span>
+        <div className="mastery">
+          <div className="mbar" aria-hidden="true"><i style={{ width: pct + "%" }} /></div>
+          <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--soft)" }}>{pct}%</span>
+          <span className={"seal-reward" + (cleared ? " show" : "")} title="Deck sealed — mastery" aria-hidden="true">通</span>
+        </div>
+      </div>
+      <div className="cards">
+        {c.review.map((card) => (
+          <FlipCard key={card.id} card={card} lang={c} known={knownSet.has(c.id + ":" + card.id)} onKnow={() => onKnow(c.id + ":" + card.id)} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+/* --------------------------- tone trainer ------------------------- */
+function ToneTrainer({ c }:{ c: LangContent }) {
+  return (
+    <>
+      <h2 className="section-title">Tone trainer<span className="count">{c.tone.items.length} contours</span></h2>
+      <div className="tone-cards">
+        {c.tone.items.map((t, i) => (
+          <div key={i} className="tone-card" role="button" tabIndex={0} aria-label={"Play " + t.glyph + " " + t.roman} onClick={() => speak(t.glyph, c.speechLang)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); speak(t.glyph, c.speechLang); } }}>
+            <div className="label">{t.label}</div>
+            <svg className="contour" viewBox="0 0 64 40" preserveAspectRatio="none" aria-hidden="true">
+              <line x1="2" y1="12" x2="62" y2="12" stroke="var(--line)" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="2" y1="28" x2="62" y2="28" stroke="var(--line)" strokeWidth="1" strokeDasharray="3 3" />
+              <polyline points={t.points} fill="none" stroke="var(--seal)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div className="glyph">{t.glyph}</div>
+            <div className="roman">{t.roman}</div>
+            <div className="gloss">“{t.gloss}”</div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/* --------------------------- vocab card --------------------------- */
+function statusOf(item: VocabItem, key: string, known: Set<string>): VocabStatus {
+  if (known.has(key)) return "known";
+  if (item.srs >= 4) return "known";
+  if (item.srs === 0) return "new";
+  return "learning";
+}
+function VocabCard({ item, lang, status, onKnow }:{ item: VocabItem; lang: LangContent; status: VocabStatus; onKnow: () => void; }) {
+  const [revealed, setRevealed] = useState(false);
+  return (
+    <div className={"vcard status-" + status}>
+      <div className="vcard-top">
+        <span className={"status-pill s-" + status}>{status}</span>
+        <span className="vdeck">{item.deck}</span>
+      </div>
+      <div className="vcard-main">
+        <div className="tian sm"><span className="ch">{item.glyph}</span></div>
+        <div className="vmeta">
+          <div className="roman">{item.roman}</div>
+          {revealed ? (
+            <>
+              <div className="vmeaning">{item.meaning}</div>
+              <div className="vex"><span className="ex-ch">{item.example.glyph}</span>{" "}<span className="ex-rom">{item.example.roman}</span><br />“{item.example.gloss}”</div>
+            </>
+          ) : (
+            <button className="reveal" onClick={() => setRevealed(true)}>Tap to reveal meaning</button>
+          )}
+        </div>
+      </div>
+      <div className="vcard-actions">
+        <button className="btn small play" onClick={() => speak(item.glyph, lang.speechLang)} aria-label={"Hear " + item.glyph}><PlayIcon /> Hear</button>
+        <button className="btn small ghost" onClick={onKnow}>{status === "known" ? <span className="with-check"><CheckIcon /> Known</span> : "I know this"}</button>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------- vocabulary ---------------------------- */
+function Vocabulary({ c, known, onKnow }:{ c: LangContent; known: Set<string>; onKnow: (key: string) => void; }) {
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const [deck, setDeck] = useState("all");
+  const [custom, setCustom] = useState<VocabItem[]>([]);
+  const [draftGlyph, setDraftGlyph] = useState("");
+  const [draftMeaning, setDraftMeaning] = useState("");
+
+  const key = (item: VocabItem) => c.id + ":" + item.id;
+  const all = useMemo(() => [...c.vocabulary, ...custom], [c.vocabulary, custom]);
+
+  const counts = useMemo(() => {
+    let knownN = 0, dueN = 0;
+    for (const item of all) { if (statusOf(item, key(item), known) === "known") knownN++; else dueN++; }
+    return { total: all.length, known: knownN, due: dueN };
+  }, [all, known, c.id]);
+  const pct = counts.total ? Math.round((counts.known / counts.total) * 100) : 0;
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return all.filter((item) => {
+      if (deck !== "all" && item.deck !== deck) return false;
+      const st = statusOf(item, key(item), known);
+      if (status !== "all" && st !== status) return false;
+      if (q) { const hay = (item.glyph + " " + item.roman + " " + item.meaning).toLowerCase(); if (!hay.includes(q)) return false; }
+      return true;
+    });
+  }, [all, query, status, deck, known, c.id]);
+
+  function addWord() {
+    const g = draftGlyph.trim(), m = draftMeaning.trim();
+    if (!g || !m) return;
+    setCustom((prev) => [{ id: "custom-" + prev.length + "-" + g, glyph: g, roman: "—", meaning: m, deck: "Daily life", anchor: "📝", srs: 0, example: { glyph: g, roman: "—", gloss: m } }, ...prev]);
+    setDraftGlyph(""); setDraftMeaning("");
+  }
+
+  const STATUS_FILTERS = ["all", "new", "learning", "known"];
+  return (
+    <>
+      <h2 className="section-title">Vocabulary<span className="count">{c.romanSystem}</span></h2>
+      <div className="vocab-summary panel">
+        <div className="vsum-stats">
+          <div className="stat"><div className="n">{counts.total}</div><div className="k">words</div></div>
+          <div className="stat"><div className="n">{counts.due}</div><div className="k">to review</div></div>
+          <div className="stat"><div className="n">{counts.known}</div><div className="k">known</div></div>
+        </div>
+        <div className="vsum-bar">
+          <div className="mbar" aria-hidden="true"><i style={{ width: pct + "%" }} /></div>
+          <span className="vsum-pct">{pct}% mastered</span>
+        </div>
+      </div>
+      <div className="vocab-controls">
+        <input className="vsearch" type="search" placeholder="Search characters, reading or meaning…" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search vocabulary" />
+        <div className="filter-pills" role="group" aria-label="Filter by status">
+          {STATUS_FILTERS.map((s) => (
+            <button key={s} className={"fpill" + (status === s ? " active" : "")} aria-pressed={status === s} onClick={() => setStatus(s)}>{s === "all" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}</button>
+          ))}
+        </div>
+      </div>
+      <div className="deck-chips" role="group" aria-label="Filter by deck">
+        <button className={"chip" + (deck === "all" ? " active" : "")} aria-pressed={deck === "all"} onClick={() => setDeck("all")}>All decks</button>
+        {VOCAB_DECKS.map((d) => (
+          <button key={d} className={"chip" + (deck === d ? " active" : "")} aria-pressed={deck === d} onClick={() => setDeck(d)}>{d}</button>
+        ))}
+      </div>
+      {filtered.length > 0 ? (
+        <div className="vocab-grid">
+          {filtered.map((item) => (
+            <VocabCard key={item.id} item={item} lang={c} status={statusOf(item, key(item), known)} onKnow={() => onKnow(key(item))} />
+          ))}
+        </div>
+      ) : (<p className="empty">No words match those filters yet.</p>)}
+      <div className="add-word panel">
+        <div className="aw-label">Add your own word</div>
+        <div className="aw-row">
+          <input className="aw-input" placeholder="Character / kana" value={draftGlyph} onChange={(e) => setDraftGlyph(e.target.value)} aria-label="New word characters" onKeyDown={(e) => { if (e.key === "Enter") addWord(); }} />
+          <input className="aw-input" placeholder="Meaning" value={draftMeaning} onChange={(e) => setDraftMeaning(e.target.value)} aria-label="New word meaning" onKeyDown={(e) => { if (e.key === "Enter") addWord(); }} />
+          <button className="btn small" onClick={addWord} disabled={!draftGlyph.trim() || !draftMeaning.trim()}>+ Add to deck</button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* --------------------------- chat bubble -------------------------- */
+function ChatBubble({ msg, lang }:{ msg: { id: string; role: "tutor" | "learner"; line: ChatLine }; lang: LangContent; }) {
+  const [revealed, setRevealed] = useState(false);
+  const { role, line } = msg;
+  const isTutor = role === "tutor";
+  return (
+    <div className={"chat-row " + role}>
+      <div className={"bubble " + role}>
+        <div className="b-glyph">{line.glyph}</div>
+        {isTutor && (revealed ? (
+          <div className="b-reveal"><span className="b-roman">{line.roman}</span><span className="b-trans">“{line.translation}”</span></div>
+        ) : (
+          <button className="b-reveal-btn" onClick={() => setRevealed(true)}>Show reading &amp; translation</button>
+        ))}
+        {isTutor && (<button className="b-play" onClick={() => speak(line.glyph, lang.speechLang)} aria-label="Play this line"><PlayIcon /></button>)}
+      </div>
+      {isTutor && line.feedback && (<div className="feedback-note" role="note">{line.feedback}</div>)}
+    </div>
+  );
+}
+
+/* ----------------------------- converse --------------------------- */
+let msgSeq = 0;
+const nextId = () => "m" + ++msgSeq;
+function Converse({ c }:{ c: LangContent }) {
+  const [mode, setMode] = useState("text");
+  const [scenarioId, setScenarioId] = useState(c.converse.scenarios[0].id);
+  const [messages, setMessages] = useState<{ id: string; role: "tutor" | "learner"; line: ChatLine }[]>([]);
+  const [input, setInput] = useState("");
+  const [followIdx, setFollowIdx] = useState(0);
+  const [listening, setListening] = useState(false);
+  const threadRef = useRef<HTMLDivElement>(null);
+
+  const scenario = useMemo(() => c.converse.scenarios.find((s) => s.id === scenarioId) || c.converse.scenarios[0], [c, scenarioId]);
+  const speechSupported = typeof window !== "undefined" && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
+
+  useEffect(() => { setMessages([{ id: nextId(), role: "tutor", line: scenario.opener }]); setFollowIdx(0); setInput(""); }, [scenario, c.id]);
+  useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight; }, [messages]);
+
+  function send(text: string) {
+    const t = text.trim(); if (!t) return;
+    const learner = { id: nextId(), role: "learner" as const, line: { glyph: t, roman: "", translation: "" } };
+    const reply = { id: nextId(), role: "tutor" as const, line: c.converse.followups[followIdx % c.converse.followups.length] };
+    setMessages((prev) => [...prev, learner, reply]);
+    setFollowIdx((i) => i + 1); setInput("");
+  }
+  function startListening() {
+    const Rec: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!Rec) return;
+    const rec = new Rec(); rec.lang = c.speechLang; rec.interimResults = false; rec.maxAlternatives = 1;
+    setListening(true);
+    rec.onresult = (e: any) => { setInput(e.results?.[0]?.[0]?.transcript || ""); };
+    rec.onend = () => setListening(false);
+    rec.onerror = () => setListening(false);
+    try { rec.start(); } catch (_) { setListening(false); }
+  }
+
+  return (
+    <>
+      <h2 className="section-title">Converse<span className="count">AI tutor · {c.name}</span></h2>
+      <div className="converse-bar">
+        <div className="scenario-chips" role="group" aria-label="Choose a scenario">
+          {c.converse.scenarios.map((s) => (
+            <button key={s.id} className={"chip" + (s.id === scenarioId ? " active" : "")} aria-pressed={s.id === scenarioId} onClick={() => setScenarioId(s.id)}>{s.label}</button>
+          ))}
+        </div>
+        <div className="mode-toggle" role="group" aria-label="Conversation mode">
+          <button className={"seg" + (mode === "text" ? " active" : "")} aria-pressed={mode === "text"} onClick={() => setMode("text")}>Text</button>
+          <button className={"seg" + (mode === "speak" ? " active" : "")} aria-pressed={mode === "speak"} onClick={() => setMode("speak")}>Speak</button>
+        </div>
+      </div>
+      <div className="chat panel">
+        <div className="chat-thread" ref={threadRef}>
+          {messages.map((m) => (<ChatBubble key={m.id} msg={m} lang={c} />))}
+        </div>
+        <div className="suggestions" aria-label="Suggested replies">
+          {c.converse.suggestions.map((s, i) => (
+            <button key={i} className="sugg" onClick={() => send(s.glyph)} title={s.translation}>
+              <span className="sugg-glyph">{s.glyph}</span>
+              <span className="sugg-rom">{s.roman}</span>
+            </button>
+          ))}
+        </div>
+        <div className="composer">
+          {mode === "speak" && (
+            <button className={"mic" + (listening ? " on" : "")} onClick={startListening} disabled={!speechSupported} aria-label={speechSupported ? "Speak your reply" : "Speech input not supported"} title={speechSupported ? "Tap and speak" : "Your browser doesn't support speech input"}><MicIcon /></button>
+          )}
+          <input className="composer-input" placeholder={mode === "speak" ? "Tap the mic, or type here…" : "Type your reply…"} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") send(input); }} aria-label="Your message" />
+          <button className="btn" onClick={() => send(input)} disabled={!input.trim()}>Send</button>
+        </div>
+      </div>
+      <p className="footnote">Tutor replies are <strong>scripted</strong> in this prototype so it runs with no backend. In production the Converse tutor calls a live model through a server that holds the key — never the browser.{mode === "speak" && !speechSupported ? " Speech input isn't available in this browser; type instead." : ""}</p>
+    </>
+  );
+}
+
+/* ------------------------------- app ------------------------------ */
+function App() {
+  const [lang, setLang] = useState<LangId>("cmn");
+  const [tab, setTab] = useState("Home");
+  const [known, setKnown] = useState<Set<string>>(() => new Set());
+  const [vocabKnown, setVocabKnown] = useState<Set<string>>(() => new Set());
+  const [bonus, setBonus] = useState(0);
+  const c = CONTENT[lang];
+
+  const minutesDone = useMemo(() => {
+    const knownHere = c.review.filter((card) => known.has(c.id + ":" + card.id)).length;
+    return Math.min(GOAL_TARGET, 6 + knownHere * 2 + bonus);
+  }, [c, known, bonus]);
+
+  const handleKnow = useCallback((key: string) => { setKnown((prev) => { const n = new Set(prev); if (n.has(key)) n.delete(key); else n.add(key); return n; }); }, []);
+  const handleVocabKnow = useCallback((key: string) => { setVocabKnown((prev) => { const n = new Set(prev); if (n.has(key)) n.delete(key); else n.add(key); return n; }); }, []);
+
+  return (
+    <>
+      <TopBar lang={lang} onLang={setLang} tab={tab} onTab={setTab} />
+      <main className="wrap">
+        {tab === "Home" && (
+          <>
+            <Hero c={c} done={minutesDone} onPractice={() => setBonus((b) => b + 5)} />
+            <h2 className="section-title">Character of the day</h2>
+            <CharacterOfDay c={c} />
+            <ReviewDeck c={c} knownSet={known} onKnow={handleKnow} />
+            <ToneTrainer c={c} />
+            <p className="footnote">Home dashboard for <strong>墨 Moshui</strong>. Switch 粵 / 普 / 日 in the top bar to re-theme every module. Pronunciation plays through your browser’s built-in speech synthesis (<code>speechSynthesis</code>) — voice quality depends on the languages your OS has installed; no audio files required to host. Full Vite + TypeScript source lives in <code>/app</code>.</p>
+          </>
+        )}
+        {tab === "Converse" && <Converse c={c} />}
+        {tab === "Vocabulary" && <Vocabulary c={c} known={vocabKnown} onKnow={handleVocabKnow} />}
+        {tab !== "Home" && tab !== "Converse" && tab !== "Vocabulary" && (
+          <div className="coming-soon panel">
+            <h2 className="section-title" style={{ marginTop: 0 }}>{tab}</h2>
+            <p>The <strong>{tab}</strong> surface isn’t built yet — Home, Converse and Vocabulary are live. Tell me which to design next and I’ll add it as its own component set.</p>
+          </div>
+        )}
+      </main>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
