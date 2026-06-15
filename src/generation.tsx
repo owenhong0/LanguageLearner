@@ -5,7 +5,16 @@ import { CONTENT } from "./content";
 import { generateContent, type GenerateType, type GeneratedItem } from "./api";
 
 /** Sections that can generate content on demand. */
-export type GenSection = "vocab" | "converse" | "reading" | "practice" | "progress";
+export type GenSection =
+  | "vocab"
+  | "converse"
+  | "reading"
+  | "practice"
+  | "progress"
+  | "build-structure"
+  | "build-verbs"
+  | "build-phrases"
+  | "build-builder";
 
 interface SectionStatus {
   busy: boolean;
@@ -22,8 +31,9 @@ interface GenerationValue {
   /** Generated items for a section in the *current* language. */
   itemsFor: (section: GenSection) => GeneratedItem[];
   statusFor: (section: GenSection) => SectionStatus;
-  /** Run a generation for a section + type; language + difficulty come from here. */
-  generate: (section: GenSection, type: GenerateType, deck: string) => Promise<void>;
+  /** Run a generation for a section + type; language + difficulty come from here.
+   *  Optional `vocab` (known/learning words) is prioritized by the model. */
+  generate: (section: GenSection, type: GenerateType, deck: string, vocab?: string[]) => Promise<void>;
   clear: (section: GenSection) => void;
   /** Generated-card "known" state (separate from real-content progress). */
   isKnown: (cardKey: string) => boolean;
@@ -89,7 +99,7 @@ export function GenerationProvider({
   const resultKey = (section: GenSection, langId: LangId) => `${section}:${langId}`;
 
   const generate = useCallback(
-    async (section: GenSection, type: GenerateType, deck: string) => {
+    async (section: GenSection, type: GenerateType, deck: string, vocab?: string[]) => {
       const target = CONTENT[lang]; // read current language at call time (source of truth)
       setStatus((s) => ({ ...s, [section]: { busy: true, error: null } }));
       try {
@@ -99,6 +109,7 @@ export function GenerationProvider({
           language: target.name,
           deck,
           difficulty,
+          vocab,
         });
         setResults((r) => ({ ...r, [resultKey(section, target.id)]: res.items }));
         setStatus((s) => ({ ...s, [section]: { busy: false, error: null } }));

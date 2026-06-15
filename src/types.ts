@@ -83,6 +83,28 @@ export interface Passage {
 /** How romanization (pinyin / jyutping / rōmaji) is displayed, app-wide (T6). */
 export type RomanPref = "reveal" | "always" | "off";
 
+/** A word-order / grammar pattern shown in the Build section. */
+export interface GrammarPattern {
+  name: string; // e.g. "Subject–Verb–Object"
+  template: string; // slots, e.g. "[主语] + [动词] + [宾语]"
+  example: Example; // a complete sentence built from known vocab
+}
+
+/** A verb or phrase entry for the Build section (rendered via VocabCard). */
+export interface BuildItem {
+  glyph: string;
+  roman: string;
+  meaning: string;
+  example?: Example;
+}
+
+/** Curated grammar / verbs / phrases for the Build section, per language. */
+export interface BuildContent {
+  patterns: GrammarPattern[];
+  verbs: BuildItem[];
+  phrases: BuildItem[];
+}
+
 export interface QuizOption {
   glyph: string;
   correct: boolean;
@@ -116,4 +138,5 @@ export interface LangContent {
   converse: ConverseSeed;
   reading: { passages: Passage[] };
   practice: { questions: QuizQuestion[] };
+  build: BuildContent;
 }

@@ -273,6 +273,24 @@ button.face.front:focus-visible { outline: 2px solid var(--indigo); outline-offs
 .gen-panel { display: flex; flex-direction: column; gap: 12px; margin: 4px 0 18px; }
 .gen-cards { margin-top: 2px; }
 
+/* ========================================================= */
+/* Build section                                             */
+/* ========================================================= */
+.build-tabs { margin: 6px 0 14px; flex-wrap: wrap; }
+.build-intro { color: var(--soft); font-size: 14px; max-width: 70ch; margin-bottom: 14px; }
+.pattern-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-bottom: 8px; }
+.pattern-card { padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.pattern-name { font-family: var(--display); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+.pattern-template { font-family: var(--mono); font-size: 12.5px; color: var(--seal); background: var(--paper);
+  border: 1px dashed var(--line); border-radius: 8px; padding: 7px 10px; }
+.pattern-ex { display: flex; flex-direction: column; gap: 3px; padding-top: 4px; border-top: 1px dashed var(--line); }
+.pattern-glyph { font-family: var(--cjk); font-size: 20px; color: var(--ink); line-height: 1.4; }
+.pattern-rom { font-family: var(--mono); color: var(--seal); font-size: 13px; }
+.pattern-gloss { color: var(--soft); font-size: 13.5px; }
+.word-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.word-chip { font-family: var(--cjk); font-size: 15px; color: var(--ink); background: var(--card);
+  border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; }
+
 .add-word { padding: 16px 20px; margin-top: 18px; }
 .aw-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
   color: var(--soft); margin-bottom: 10px; }
