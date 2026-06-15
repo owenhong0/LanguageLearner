@@ -1,0 +1,21 @@
+{
+  "name": "moshui-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Moshui backend — in-memory progress + Anthropic content generation (deploys to Render).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}

@@ -1,0 +1,17 @@
+# Render Web Service for the Moshui backend (the Express server in /server).
+# Deploy: push to GitHub, then in Render create a "Blueprint" from this repo, or
+# create a Web Service pointing at the /server directory. Set ANTHROPIC_API_KEY
+# in the Render dashboard — it is intentionally not stored here.
+services:
+  - type: web
+    name: moshui-server
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false # set this secret in the Render dashboard; never commit it
