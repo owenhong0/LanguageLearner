@@ -174,3 +174,44 @@ describe("accessibility (T4)", () => {
     expect(screen.getAllByRole("button", { name: /^Play line:/ }).length).toBeGreaterThan(0);
   });
 });
+
+describe("reading expansion + romanization preference (T6)", () => {
+  beforeEach(() => localStorage.clear());
+
+  const gotoReading = async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Reading" }));
+    return user;
+  };
+
+  it("hides romanization until tapped by default, and 'Always on' reveals it app-wide", async () => {
+    const user = await gotoReading();
+    const firstLineRoman = /jīn tiān tiān qì hěn hǎo/;
+    // Default "reveal": line romanization is not shown until the line is tapped.
+    expect(screen.queryByText(firstLineRoman)).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Always on" }));
+    expect(screen.getByText(firstLineRoman)).toBeInTheDocument();
+    // "Off" hides romanization entirely (including the passage title reading).
+    await user.click(screen.getByRole("button", { name: "Off" }));
+    expect(screen.queryByText(firstLineRoman)).toBeNull();
+    expect(screen.queryByText(/jīn tiān tiān qì$/)).toBeNull();
+  });
+
+  it("offers the new graded passages with a comprehension question", async () => {
+    const user = await gotoReading();
+    // A newly added passage is selectable…
+    await user.click(screen.getByRole("button", { name: /Weekend activities/ }));
+    // …and shows a comprehension question.
+    expect(screen.getByText("How much is a ticket?")).toBeInTheDocument();
+    // Picking the right answer is confirmed; a wrong pick would say otherwise.
+    await user.click(screen.getByRole("button", { name: /20 yuan/ }));
+    expect(screen.getByText("Correct")).toBeInTheDocument();
+  });
+
+  it("persists the romanization preference across reloads", async () => {
+    const user = await gotoReading();
+    await user.click(screen.getByRole("button", { name: "Off" }));
+    expect(JSON.parse(localStorage.getItem("moshui.v1")!).romanPref).toBe("off");
+  });
+});

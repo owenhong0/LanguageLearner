@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { LangId } from "./types";
+import type { LangId, RomanPref } from "./types";
 import { CONTENT, GOAL_TARGET } from "./content";
 import { loadProgress, saveProgress, clearProgress, boxLevel, promoteBox, demoteBox, BOX_MAX } from "./store";
 import { TopBar } from "./components/TopBar";
@@ -25,11 +25,12 @@ export default function App() {
   const [bonus, setBonus] = useState(initial.bonus);
   const [practice, setPractice] = useState(initial.practice);
   const [boxes, setBoxes] = useState<Record<string, number>>(initial.boxes);
+  const [romanPref, setRomanPref] = useState<RomanPref>(initial.romanPref);
 
   // Persist whenever any tracked slice changes.
   useEffect(() => {
-    saveProgress({ known: [...known], vocabKnown: [...vocabKnown], bonus, practice, boxes });
-  }, [known, vocabKnown, bonus, practice, boxes]);
+    saveProgress({ known: [...known], vocabKnown: [...vocabKnown], bonus, practice, boxes, romanPref });
+  }, [known, vocabKnown, bonus, practice, boxes, romanPref]);
 
   const c = CONTENT[lang];
 
@@ -66,6 +67,7 @@ export default function App() {
     setBonus(0);
     setPractice({ answered: 0, correct: 0 });
     setBoxes({});
+    setRomanPref("reveal");
   }, []);
 
   return (
@@ -89,8 +91,8 @@ export default function App() {
         )}
 
         {tab === "Converse" && <Converse c={c} />}
-        {tab === "Vocabulary" && <Vocabulary c={c} known={vocabKnown} onKnow={handleVocabKnow} />}
-        {tab === "Reading" && <Reading c={c} />}
+        {tab === "Vocabulary" && <Vocabulary c={c} known={vocabKnown} onKnow={handleVocabKnow} romanPref={romanPref} onRomanPref={setRomanPref} />}
+        {tab === "Reading" && <Reading c={c} romanPref={romanPref} onRomanPref={setRomanPref} />}
         {tab === "Practice" && <Practice c={c} onAnswer={recordAnswer} />}
         {tab === "Progress" && <Progress c={c} vocabKnown={vocabKnown} practice={practice} onReset={resetProgress} />}
       </main>

@@ -375,6 +375,27 @@ button.face.front:focus-visible { outline: 2px solid var(--indigo); outline-offs
 .read-trans { color: var(--soft); font-size: 14px; }
 .reader-playall { margin-top: 18px; }
 
+/* romanization-display preference control (T6) */
+.roman-pref { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; flex-wrap: wrap; }
+.roman-pref-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+
+/* reading comprehension question (T6) */
+.read-q { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); }
+.read-q-ask { font-family: var(--display); font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+.read-q-opts { display: flex; flex-direction: column; gap: 8px; }
+.read-q-opt { text-align: left; font-family: var(--body); font-size: 14px; color: var(--ink); background: var(--card);
+  border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; cursor: pointer;
+  transition: border-color .15s, background .15s; }
+.read-q-opt:hover:not(:disabled) { border-color: var(--soft); }
+.read-q-opt:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+.read-q-opt:disabled { cursor: default; }
+.read-q-opt.correct { border-color: var(--jade); background: color-mix(in srgb, var(--jade) 10%, var(--card)); }
+.read-q-opt.wrong { border-color: var(--seal); background: color-mix(in srgb, var(--seal) 9%, var(--card)); }
+.read-q-opt.dim { opacity: .5; }
+.read-q-verdict { margin-top: 10px; font-family: var(--mono); font-size: 13px; }
+.read-q-verdict.ok { color: var(--jade); }
+.read-q-verdict.no { color: var(--seal); }
+
 /* ========================================================= */
 /* Practice                                                  */
 /* ========================================================= */

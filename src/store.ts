@@ -7,7 +7,11 @@
  * and corrupt/garbage JSON both fall back to empty progress rather than throwing.
  */
 
+import type { RomanPref } from "./types";
+
 const STORAGE_KEY = "moshui.v1";
+
+const ROMAN_PREFS: RomanPref[] = ["reveal", "always", "off"];
 
 export interface Progress {
   /** Home review-deck "known" (mastered) keys, namespaced "lang:cardId". */
@@ -20,6 +24,8 @@ export interface Progress {
   practice: { answered: number; correct: number };
   /** Leitner box level (1..5) per review card, keyed "lang:cardId" (T3). */
   boxes: Record<string, number>;
+  /** App-wide romanization display preference (T6). */
+  romanPref: RomanPref;
 }
 
 // --- Leitner spaced-repetition (T3) ---
@@ -47,10 +53,10 @@ export function isDue(box: number): boolean {
   return box < BOX_MAX;
 }
 
-const EMPTY: Progress = { known: [], vocabKnown: [], bonus: 0, practice: { answered: 0, correct: 0 }, boxes: {} };
+const EMPTY: Progress = { known: [], vocabKnown: [], bonus: 0, practice: { answered: 0, correct: 0 }, boxes: {}, romanPref: "reveal" };
 
 function emptyProgress(): Progress {
-  return { known: [], vocabKnown: [], bonus: 0, practice: { answered: 0, correct: 0 }, boxes: {} };
+  return { known: [], vocabKnown: [], bonus: 0, practice: { answered: 0, correct: 0 }, boxes: {}, romanPref: "reveal" };
 }
 
 function hasStorage(): boolean {
@@ -89,12 +95,16 @@ function normalize(v: unknown): Progress {
   const answered = nonNegInt(p.answered);
   // `correct` can never exceed `answered`.
   const correct = Math.min(answered, nonNegInt(p.correct));
+  const romanPref = ROMAN_PREFS.includes(o.romanPref as RomanPref)
+    ? (o.romanPref as RomanPref)
+    : "reveal";
   return {
     known: strArray(o.known),
     vocabKnown: strArray(o.vocabKnown),
     bonus: nonNegInt(o.bonus),
     practice: { answered, correct },
     boxes: boxMap(o.boxes),
+    romanPref,
   };
 }
 

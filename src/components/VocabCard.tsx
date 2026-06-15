@@ -16,9 +16,11 @@ interface Props {
   lang: LangContent;
   status: VocabStatus;
   onKnow: () => void;
+  /** Hide the romanization line when the app-wide preference is "off" (T6). */
+  showRoman: boolean;
 }
 
-export function VocabCard({ item, lang, status, onKnow }: Props) {
+export function VocabCard({ item, lang, status, onKnow, showRoman }: Props) {
   const [revealed, setRevealed] = useState(false);
 
   return (
@@ -33,13 +35,13 @@ export function VocabCard({ item, lang, status, onKnow }: Props) {
           <span className="ch">{item.glyph}</span>
         </div>
         <div className="vmeta">
-          <div className="roman">{item.roman}</div>
+          {showRoman && <div className="roman">{item.roman}</div>}
           {revealed ? (
             <>
               <div className="vmeaning">{item.meaning}</div>
               <div className="vex">
                 <span className="ex-ch">{item.example.glyph}</span>{" "}
-                <span className="ex-rom">{item.example.roman}</span>
+                {showRoman && <span className="ex-rom">{item.example.roman}</span>}
                 <br />“{item.example.gloss}”
               </div>
             </>
