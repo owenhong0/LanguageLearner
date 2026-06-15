@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
@@ -213,5 +213,58 @@ describe("reading expansion + romanization preference (T6)", () => {
     const user = await gotoReading();
     await user.click(screen.getByRole("button", { name: "Off" }));
     expect(JSON.parse(localStorage.getItem("moshui.v1")!).romanPref).toBe("off");
+  });
+});
+
+describe("Vocabulary ↔ Render backend", () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.unstubAllGlobals());
+
+  const gotoVocab = async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Vocabulary" }));
+    return user;
+  };
+
+  it("renders the server progress summary from GET /progress", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ decks: { Greetings: { known: 2, learning: 1, new: 0 } }, totals: { known: 2, learning: 1, new: 0 }, cards: 3 }),
+      }),
+    );
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /check my progress/i }));
+    expect(await screen.findByText(/3 cards tracked/i)).toBeInTheDocument();
+    expect(screen.getByText(/2 known/)).toBeInTheDocument();
+  });
+
+  it("renders generated content from POST /generate into cards", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        type: "vocab",
+        deck: "General vocabulary",
+        difficulty: "beginner",
+        items: [{ glyph: "宇宙", roman: "yǔzhòu", gloss: "the universe" }],
+      }),
+    });
+    vi.stubGlobal("fetch", fetchSpy);
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /generate new content/i }));
+    expect(await screen.findByText("宇宙")).toBeInTheDocument();
+    expect(screen.getByText("the universe")).toBeInTheDocument();
+    // POSTed the selected type/deck/difficulty.
+    const init = fetchSpy.mock.calls[0][1];
+    expect(JSON.parse(init.body)).toMatchObject({ type: "vocab", difficulty: "beginner" });
+  });
+
+  it("shows an error when generation fails", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 502, json: async () => ({ error: "Generation failed" }) }));
+    const user = await gotoVocab();
+    await user.click(screen.getByRole("button", { name: /generate new content/i }));
+    expect(await screen.findByText(/generation failed/i)).toBeInTheDocument();
   });
 });
