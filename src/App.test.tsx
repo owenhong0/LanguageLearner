@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
@@ -213,5 +213,56 @@ describe("reading expansion + romanization preference (T6)", () => {
     const user = await gotoReading();
     await user.click(screen.getByRole("button", { name: "Off" }));
     expect(JSON.parse(localStorage.getItem("moshui.v1")!).romanPref).toBe("off");
+  });
+});
+
+describe("Converse tutor: demo mode + live proxy (T1)", () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  const gotoConverse = async () => {
+    const user = userEvent.setup();
+    const utils = render(<App />);
+    await user.click(screen.getByRole("button", { name: "Converse" }));
+    return { user, ...utils };
+  };
+
+  it("shows the scripted demo-mode notice when no proxy is configured", async () => {
+    vi.stubEnv("VITE_TUTOR_PROXY_URL", "");
+    await gotoConverse();
+    expect(screen.getByText(/scripted demo mode/i)).toBeInTheDocument();
+  });
+
+  it("still replies (scripted) in demo mode without any network call", async () => {
+    vi.stubEnv("VITE_TUTOR_PROXY_URL", "");
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    const { user, container } = await gotoConverse();
+    const before = container.querySelectorAll(".chat-row").length;
+    // Send a suggested reply.
+    await user.click(within(screen.getByLabelText(/suggested replies/i)).getAllByRole("button")[0]);
+    await waitFor(() =>
+      expect(container.querySelectorAll(".chat-row").length).toBeGreaterThan(before + 1),
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("uses the live proxy reply when VITE_TUTOR_PROXY_URL is set", async () => {
+    vi.stubEnv("VITE_TUTOR_PROXY_URL", "https://proxy.example.com");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ native: "好的，要哪种茶？", roman: "hǎo de…", en: "Sure, which tea?", feedback: "" }),
+      }),
+    );
+    const { user } = await gotoConverse();
+    expect(screen.queryByText(/scripted demo mode/i)).toBeNull();
+    await user.click(within(screen.getByLabelText(/suggested replies/i)).getAllByRole("button")[0]);
+    // The live reply text is rendered in the thread.
+    expect(await screen.findByText("好的，要哪种茶？")).toBeInTheDocument();
   });
 });

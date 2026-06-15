@@ -8,9 +8,9 @@ whole dashboard.
 ## Run it locally
 
 ```bash
-cd app
 npm install
 npm run dev      # http://localhost:5173
+npm test         # run the test suite (Vitest)
 ```
 
 ## Build & host
@@ -22,7 +22,111 @@ npm run preview  # preview the production build locally
 
 `dist/` is a static bundle (`base: "./"` keeps asset paths relative), so you can
 drop it on **GitHub Pages, Netlify, Vercel, Cloudflare Pages, S3** — any static
-host. No server or API keys required.
+host. No server or API keys required (the Converse tutor runs in scripted demo
+mode unless you wire up the optional proxy below).
+
+## Live tutor (optional proxy)
+
+By default the **Converse** tab uses a small built-in **scripted** exchange, so
+the app runs with no backend and **no API key**. To make the tutor call a real
+model, point the app at a server-side proxy that holds the Anthropic key:
+
+```bash
+cp .env.example .env          # then set VITE_TUTOR_PROXY_URL=https://your-proxy.example.com
+npm run build
+```
+
+When `VITE_TUTOR_PROXY_URL` is set, Converse POSTs the conversation to that URL
+and renders the reply; if the request fails it falls back to the scripted reply
+and shows a notice. **Never put an API key in the frontend** — anything prefixed
+`VITE_` is bundled into the public client.
+
+### Request / response contract
+
+The frontend `POST`s JSON:
+
+```json
+{
+  "langId": "cmn",
+  "language": "Mandarin",
+  "romanSystem": "Pinyin",
+  "scenario": "Order tea",
+  "messages": [
+    { "role": "tutor",   "text": "欢迎！你想喝什么？" },
+    { "role": "learner", "text": "我想喝茶。" }
+  ]
+}
+```
+
+The proxy must reply with:
+
+```json
+{ "native": "好的，要哪种茶？", "roman": "hǎo de, yào nǎ zhǒng chá?", "en": "Sure, which kind of tea?", "feedback": "Nicely phrased!" }
+```
+
+### Minimal Cloudflare Worker proxy
+
+The key lives only here, as a Worker **secret** (`wrangler secret put ANTHROPIC_API_KEY`).
+It never reaches the browser. Uses the official SDK and structured outputs to
+guarantee the reply shape.
+
+```ts
+// worker.ts — `npm i @anthropic-ai/sdk`, deploy with `wrangler deploy`
+import Anthropic from "@anthropic-ai/sdk";
+
+const REPLY_SCHEMA = {
+  type: "object",
+  properties: {
+    native: { type: "string" },
+    roman: { type: "string" },
+    en: { type: "string" },
+    feedback: { type: "string" },
+  },
+  required: ["native", "roman", "en", "feedback"],
+  additionalProperties: false,
+} as const;
+
+const cors = (origin: string) => ({
+  "access-control-allow-origin": origin,        // tighten to your site's origin in production
+  "access-control-allow-headers": "content-type",
+  "access-control-allow-methods": "POST, OPTIONS",
+});
+
+export default {
+  async fetch(req: Request, env: { ANTHROPIC_API_KEY: string }): Promise<Response> {
+    const origin = req.headers.get("origin") ?? "*";
+    if (req.method === "OPTIONS") return new Response(null, { headers: cors(origin) });
+    if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+
+    const { language, romanSystem, scenario, messages } = await req.json();
+    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+
+    const response = await client.messages.create({
+      model: "claude-opus-4-8",
+      max_tokens: 1024,
+      system:
+        `You are a friendly ${language} tutor in a "${scenario}" role-play. Reply with ONE short, ` +
+        `natural ${language} turn that continues the conversation. Provide its ${romanSystem} ` +
+        `romanization, an English translation, and one brief, kind piece of feedback on the ` +
+        `learner's last message (empty string if nothing to correct).`,
+      messages: messages.map((m: { role: string; text: string }) => ({
+        role: m.role === "learner" ? "user" : "assistant",
+        content: m.text,
+      })),
+      output_config: { format: { type: "json_schema", schema: REPLY_SCHEMA } },
+    });
+
+    const text = response.content.find((b) => b.type === "text")?.text ?? "{}";
+    return new Response(text, {
+      headers: { "content-type": "application/json", ...cors(origin) },
+    });
+  },
+};
+```
+
+A Netlify/Vercel function is the same idea: read `ANTHROPIC_API_KEY` from the
+function's environment, call the SDK server-side, return the JSON. The frontend
+never sees the key.
 
 ## How it's wired
 

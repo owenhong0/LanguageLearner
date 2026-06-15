@@ -330,6 +330,12 @@ button.face.front:focus-visible { outline: 2px solid var(--indigo); outline-offs
 .coming-soon { padding: 28px; }
 .coming-soon p { color: var(--soft); max-width: 60ch; }
 
+/* Live-tutor / demo-mode status banner (T1) */
+.tutor-mode-note { margin: 0 0 14px; padding: 10px 14px; border: 1px solid var(--line);
+  border-left: 3px solid var(--seal); border-radius: 0 10px 10px 0; background: var(--card);
+  color: var(--soft); font-size: 13px; max-width: 70ch; }
+.bubble.typing { color: var(--soft); font-style: italic; }
+
 @media (max-width: 760px) {
   .vocab-summary { gap: 14px; }
   .vsum-bar { justify-content: flex-start; }

@@ -1,6 +1,11 @@
 # dependencies
 node_modules/
 
+# local env — never commit keys; .env.example is the committed template
+.env
+.env.*
+!.env.example
+
 # build output
 dist/
 
