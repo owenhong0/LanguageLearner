@@ -17,11 +17,11 @@ function Line({ line, lang }: { line: ReadingLine; lang: LangContent }) {
           className="read-glyph"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
-          aria-label="Reveal reading and translation"
+          aria-label={`${line.glyph} — ${open ? "hide" : "show"} reading and translation`}
         >
           {line.glyph}
         </button>
-        <button className="line-play" onClick={() => speak(line.glyph, lang.speechLang)} aria-label="Play line">
+        <button className="line-play" onClick={() => speak(line.glyph, lang.speechLang)} aria-label={`Play line: ${line.glyph}`}>
           <PlayIcon />
         </button>
       </div>

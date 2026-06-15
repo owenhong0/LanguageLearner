@@ -116,7 +116,15 @@ a { color: inherit; }
   transform-style: preserve-3d; }
 .flip.is-flipped .flip-inner { transform: rotateY(180deg); }
 .face { position: absolute; inset: 0; backface-visibility: hidden; border: 1px solid var(--line);
-  border-radius: 14px; background: var(--card); padding: 16px; display: flex; flex-direction: column; }
+  border-radius: 14px; background: var(--card); padding: 16px; display: flex; flex-direction: column;
+  font: inherit; color: var(--ink); }
+/* Front face is a real <button> (T4); strip the UA chrome so it looks unchanged. */
+button.face { appearance: none; -webkit-appearance: none; cursor: pointer; text-align: center; }
+button.face.front:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; }
+/* The back's text doubles as the "flip back" control. */
+.back-flip { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 0;
+  margin: 0; font: inherit; color: inherit; cursor: pointer; border-radius: 8px; }
+.back-flip:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; }
 .flip.known .face { border-color: var(--jade); box-shadow: inset 0 0 0 1px var(--jade); }
 .face.front { align-items: center; justify-content: center; gap: 12px; text-align: center; }
 .face.front .tian { width: 120px; height: 120px; }
@@ -132,7 +140,7 @@ a { color: inherit; }
 .known-tag { position: absolute; top: 12px; right: 12px; display: flex; align-items: center; gap: 5px;
   font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--jade); }
 .known-tag svg { width: 14px; height: 14px; }
-.flip:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; border-radius: 14px; }
+/* (focus now lives on the face buttons — see button.face.front / .back-flip above) */
 
 /* Leitner spaced-repetition footer on the card back (T3) */
 .sr { display: flex; flex-direction: column; gap: 10px; }
