@@ -454,6 +454,42 @@ button.face.front:focus-visible { outline: 2px solid var(--indigo); outline-offs
   .quiz-result { flex-direction: column; text-align: center; }
   .mr-name { min-width: 0; }
 }
+/* ========================================================= */
+/* T5 — mobile & tap-target polish                            */
+/* ========================================================= */
+
+/* Touch targets ≥ 44px and overflow fixes on mobile. Scoped to the breakpoint
+   so the desktop layout and tokens are unchanged. */
+@media (max-width: 760px) {
+  /* ≥44px hit areas — grown via min-height/padding, not larger text. */
+  .btn, .tab, .seg, .chip, .fpill, .pill,
+  .reveal, .b-reveal-btn, .vsearch, .aw-input, .composer-input {
+    min-height: 44px;
+  }
+  .tab, .seg, .chip, .fpill { display: inline-flex; align-items: center; justify-content: center; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; }
+  /* Icon-only buttons: expand the tap area to 44px without enlarging the glyph. */
+  .line-play, .sr-hear { width: 44px; height: 44px; }
+  .b-play { width: 40px; height: 40px; }
+  .bubble.tutor { padding-right: 56px; }
+}
+
+/* Give the language pills their own full-width row on mobile (matching the tab
+   row), so the brand + pills + tabs never overflow into a horizontal scroll.
+   At ≤480px the pills also wrap among themselves rather than clipping. */
+@media (max-width: 760px) {
+  .pills { order: 2; width: 100%; margin-left: 0; flex-wrap: wrap; }
+  .tabs { order: 3; }
+}
+
+/* Tightest widths (≤360px): trim the hero so nothing clips at 320px. */
+@media (max-width: 360px) {
+  .greet { padding: 22px 20px; }
+  .greet h1 { font-size: 28px; }
+  .greet-glyph { gap: 14px; }
+  .greet-glyph .g { font-size: 52px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, .flip-inner { transition: none !important; animation: none !important; }
 }
